@@ -11,7 +11,7 @@ import FarmerLandingPage from './pages/LandingPage'
 import PrivateRoute from './components/PrivateRoute';
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import RetailerRegForm from './auth/form/retailerRegForm'
+import RetailerRegForm from './auth/form/RetailerRegForm'
 import Sidebar from './components/Sidebar'
 import AddAdmin from './pages/admin/AddAdmin'
 import AddCrop from './pages/farmer/AddCrop'
