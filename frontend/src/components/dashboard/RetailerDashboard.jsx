@@ -82,28 +82,7 @@ const RetailerDashboard = () => {
         ))}
       </section>
 
-      <section className="rd-section">
-        <div className="rd-section-header">
-          <div>
-            <p className="rd-kicker">Navigation</p>
-            <h2>Quick links</h2>
-          </div>
-          <span className="rd-section-hint">Same as the retailer sidebar</span>
-        </div>
-
-        <div className="rd-links-grid">
-          {retailerLinks.map((link) => (
-            <Link key={link.id} to={link.path} className="rd-link-card">
-              <div className="rd-link-icon">{link.icon}</div>
-              <div className="rd-link-copy">
-                <h3>{link.label}</h3>
-                <p>{linkDescriptions[link.id]}</p>
-              </div>
-              <span className="rd-link-arrow">→</span>
-            </Link>
-          ))}
-        </div>
-      </section>
+      
 
       <section className="rd-section rd-two-col">
         <div className="rd-panel">

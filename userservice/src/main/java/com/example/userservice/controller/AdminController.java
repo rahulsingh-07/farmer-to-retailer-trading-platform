@@ -6,6 +6,10 @@ import com.example.userservice.serviceImp.AdminServiceImp;
 import com.example.userservice.serviceImp.UserServiceImp;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,21 +41,20 @@ public class AdminController {
 
 
     @GetMapping("/pendingUsers")
-    public ResponseEntity<?> pendingUser(){
+    public ResponseEntity<Page<Map<String, Object>>> pendingUsers(
+            @PageableDefault(page = 0,size = 1, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        List<Users> pendingUsers = adminService.getPending();
+        Page<Users> pendingUsersPage = adminService.getPending(pageable);
 
-        List<Map<String, Object>> response = pendingUsers.stream()
-                .map(user -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("userId", user.getId());
-                    map.put("fullName", user.getFullName());
-                    map.put("email", user.getEmail());
-                    map.put("phoneNumber", user.getPhoneNumber());
-                    map.put("status", user.getStatus());
-                    return map;
-                })
-                .toList();
+        Page<Map<String, Object>> response = pendingUsersPage.map(user -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("userId", user.getId());
+            map.put("fullName", user.getFullName());
+            map.put("email", user.getEmail());
+            map.put("phoneNumber", user.getPhoneNumber());
+            map.put("status", user.getStatus());
+            return map;
+        });
 
         return ResponseEntity.ok(response);
     }

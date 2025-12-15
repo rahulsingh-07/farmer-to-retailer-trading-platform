@@ -204,6 +204,14 @@
   transition: all 0.3s ease;
 }
 
+.login-footer .secondary-cta {
+  display: inline-block;
+}
+
+.login-footer .secondary-cta + .secondary-cta {
+  margin-left: 1rem;
+}
+
 .secondary-cta:hover {
   color: #15803d;
   transform: translateX(4px);

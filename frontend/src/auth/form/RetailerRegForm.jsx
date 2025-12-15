@@ -100,8 +100,8 @@ const handleChange = (e) => {
       <div className="reg-container">
         <div className="reg-card">
           <div className="reg-header">
-            <h1 className="reg-title">Farmer Registration</h1>
-            <p className="reg-subtitle">Join FarmFresh Connect and start selling directly to retailers</p>
+            <h1 className="reg-title">Retailer Registration</h1>
+            <p className="reg-subtitle">Join FarmFresh Connect and start sourcing fresh produce directly from farmers</p>
           </div>
 
           {message && (
@@ -230,7 +230,7 @@ const handleChange = (e) => {
                   Submitting...
                 </>
               ) : (
-                "Register as Farmer"
+                "Register as Retailer"
               )}
             </button>
           </form>

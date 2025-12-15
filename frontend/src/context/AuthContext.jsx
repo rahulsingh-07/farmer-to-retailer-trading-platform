@@ -54,9 +54,10 @@ const [loading, setLoading] = useState(true);
   };
 
   useEffect(() => {
-  const savedToken = localStorage.getItem('token');
+  const rawToken = localStorage.getItem('token');
 
-  if (savedToken) {
+  if (rawToken) {
+    const savedToken = rawToken.trim().replace(/\s/g, "");
     const payload = parseJwt(savedToken);
 
     if (payload && payload.sub) {
@@ -91,12 +92,13 @@ const [loading, setLoading] = useState(true);
       if (!data.token) {
         throw new Error('Invalid login response: Token missing');
       }
-      const parsed = parseJwt(data.token);
+      const cleanToken = data.token.trim().replace(/\s/g, '');
+      const parsed = parseJwt(cleanToken);
       if (!parsed || !parsed.sub) {
         throw new Error('Invalid JWT token received');
       }
-      localStorage.setItem('token', data.token);
-      setToken(data.token);
+      localStorage.setItem('token', cleanToken);
+      setToken(cleanToken);
       setUser({
   username: parsed.sub,
   role: Array.isArray(parsed.role) ? parsed.role : [parsed.role], // ✅ Always convert to array

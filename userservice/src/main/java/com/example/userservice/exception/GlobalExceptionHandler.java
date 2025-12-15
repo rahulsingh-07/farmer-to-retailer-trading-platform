@@ -33,13 +33,47 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleNotFound(UserNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", ex.getMessage()));
+    public ResponseEntity<?> handleNotFound(UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                Map.of(
+                        "error", true,
+                        "message", ex.getMessage()
+                )
+        );
     }
 
     @ExceptionHandler(UserRejectedException.class)
     public ResponseEntity<?> handleUserRejected(UserRejectedException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Map.of(
+                        "error", true,
+                        "message", ex.getMessage()
+                )
+        );
+    }
+
+    @ExceptionHandler(CropNotFoundException.class)
+    public ResponseEntity<?> handleUserRejected(CropNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Map.of(
+                        "error", true,
+                        "message", ex.getMessage()
+                )
+        );
+    }
+
+    @ExceptionHandler(AuctionNotFoundException.class)
+    public ResponseEntity<?> handleUserRejected(AuctionNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Map.of(
+                        "error", true,
+                        "message", ex.getMessage()
+                )
+        );
+    }
+
+    @ExceptionHandler(InvalidBidException.class)
+    public ResponseEntity<?> handleUserRejected(InvalidBidException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 Map.of(
                         "error", true,

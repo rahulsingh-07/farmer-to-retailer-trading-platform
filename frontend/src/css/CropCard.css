@@ -1,0 +1,109 @@
+/* CropCard.css */
+.fk-card {
+  display: flex;
+  padding: 16px;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+}
+
+.fk-card:hover {
+  background: #f9fafb;
+}
+
+.fk-card-left {
+  width: 150px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fk-card-left img {
+  max-width: 140px;
+  max-height: 140px;
+  object-fit: contain;
+}
+
+.fk-card-right {
+  flex: 1;
+  margin-left: 16px;
+}
+
+.fk-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #111827;
+}
+
+.fk-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.fk-rating-badge {
+  background: #388e3c;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.fk-rating-text {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.fk-bullets {
+  list-style: disc;
+  padding-left: 18px;
+  margin: 4px 0 8px 0;
+  font-size: 13px;
+  color: #374151;
+}
+
+.fk-bullets li {
+  margin-bottom: 2px;
+}
+
+.fk-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.fk-price-block {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.fk-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.fk-strike {
+  font-size: 14px;
+  color: #9ca3af;
+  text-decoration: line-through;
+}
+
+.fk-off {
+  font-size: 13px;
+  color: #16a34a;
+}
+
+.fk-right-meta {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.fk-days {
+  font-weight: 500;
+  color: red;
+}

@@ -161,8 +161,12 @@ const Login = () => {
                 Register as Farmer
               </Link>
             </p>
-            <Link to="/registerRetailer" className="secondary-cta">
+            <Link to="/registerRetailer" className=" secondary-cta">
               Register as Retailer
+            </Link>
+            
+            <Link to="/forgot-password" className="secondary-cta ">
+              Forgot password?
             </Link>
           </div>
         </div>

@@ -1,10 +1,12 @@
 package com.example.userservice.serviceImp;
 
+import com.example.userservice.dto.ForgetPasswordRequest;
 import com.example.userservice.dto.LoginResponse;
 import com.example.userservice.dto.LoginUser;
 import com.example.userservice.entity.PasswordResetToken;
 import com.example.userservice.entity.Users;
 import com.example.userservice.exception.UserNotFoundException;
+import com.example.userservice.notification.EmailService;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.service.AuthService;
 import com.example.userservice.util.JwtUtil;
@@ -16,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -26,6 +30,7 @@ public class AuthServiceImp implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final TokenServiceImp tokenService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Override
     public LoginResponse login(LoginUser loginRequest) {
@@ -35,7 +40,7 @@ public class AuthServiceImp implements AuthService {
                         loginRequest.getPassword()
                 )
         );
-
+        // → Calls CustomUserDetailsService.loadUserByUsername()
         if(!auth.isAuthenticated()) {
             throw new BadCredentialsException("Authentication failed");
         }
@@ -43,7 +48,7 @@ public class AuthServiceImp implements AuthService {
         Users user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+        String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name(),user.getId());
 
         return new LoginResponse(token, "Login successful");
     }
@@ -63,8 +68,22 @@ public class AuthServiceImp implements AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         user.setPassword(passwordEncoder.encode(rawPassword));
+        user.setUpdatePasswordRequired(false);
+        user.setPasswordResetAttempts(0);
         userRepository.save(user);
         tokenService.deleteToken(token);
+    }
+
+    public String forgetPassword(String email){
+        Users user=userRepository.findByEmail(email)
+                .orElseThrow(()->new UserNotFoundException("User with email not exist"));
+
+        user.setUpdateAt(LocalDateTime.now());
+        String msg=tokenService.generateToken(user.getId());
+        String userName=user.getUsername();
+        emailService.sendPasswordSetupEmail(user.getEmail(),msg,userName,user.getFullName());
+
+        return "link send to your email";
     }
 
 }

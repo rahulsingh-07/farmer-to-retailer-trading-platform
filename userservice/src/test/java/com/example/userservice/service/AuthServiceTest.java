@@ -72,7 +72,7 @@ class AuthServiceTest {
         user.setEmail("veer@gmail.com");
 
         when(userRepository.findByUsername("veer")).thenReturn(Optional.of(user));
-        when(jwtUtil.generateToken("veer", "FARMER")).thenReturn("fake-jwt-token");
+        when(jwtUtil.generateToken("veer", "FARMER",id)).thenReturn("fake-jwt-token");
 
         LoginResponse response = authService.login(loginRequest);
 

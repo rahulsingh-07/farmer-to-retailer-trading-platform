@@ -1,9 +1,6 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.dto.FarmerRegisterRequest;
-import com.example.userservice.dto.LoginResponse;
-import com.example.userservice.dto.LoginUser;
-import com.example.userservice.dto.RetailerRegisterRequest;
+import com.example.userservice.dto.*;
 import com.example.userservice.exception.UserNotFoundException;
 import com.example.userservice.serviceImp.AuthServiceImp;
 import com.example.userservice.serviceImp.TokenServiceImp;
@@ -24,6 +21,7 @@ public class AuthController {
     private final UserServiceImp userService;
     private final AuthServiceImp authService;
     private final TokenServiceImp tokenService;
+    private static final String MSG = "message";
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginUser loginRequest) {
@@ -33,23 +31,23 @@ public class AuthController {
 
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", e.getMessage()));
+                    .body(Map.of(MSG, e.getMessage()));
 
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("message", e.getMessage()));
+                    .body(Map.of(MSG, e.getMessage()));
         }
     }
 
     @PostMapping("/register/farmer")
-    public ResponseEntity<?> farmer(@Valid @RequestBody FarmerRegisterRequest user){
-        return ResponseEntity.ok(Map.of("message",userService.createFarmerUser(user)));
+    public ResponseEntity<Map<String,String>> farmer(@Valid @RequestBody FarmerRegisterRequest user){
+        return ResponseEntity.ok(Map.of(MSG,userService.createFarmerUser(user)));
 
     }
 
     @PostMapping("/register/retailer")
-    public ResponseEntity<?> retailer(@Valid @RequestBody RetailerRegisterRequest user){
-        return ResponseEntity.ok(Map.of("message",userService.createRetailerUser(user)));
+    public ResponseEntity<Map<String,String>> retailer(@Valid @RequestBody RetailerRegisterRequest user){
+        return ResponseEntity.ok(Map.of(MSG,userService.createRetailerUser(user)));
 
     }
 
@@ -60,17 +58,17 @@ public class AuthController {
             boolean isValid = tokenService.validateToken(token);
             return ResponseEntity.ok(Map.of("valid", isValid));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Invalid token"));
+            return ResponseEntity.badRequest().body(Map.of(MSG, "Invalid token"));
         }
     }
 
     @PostMapping("/set-password")
-    public ResponseEntity<?> setPassword(@RequestParam String token, @RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String,String>> setPassword(@RequestParam String token, @RequestBody Map<String, String> request) {
         try {
             String password = request.get("password");
             authService.setPassword(token, password);
 
-            return ResponseEntity.ok(Map.of("message", "Password set successfully"));
+            return ResponseEntity.ok(Map.of(MSG, "Password set successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
@@ -79,6 +77,11 @@ public class AuthController {
     @GetMapping("/totalUsers")
     public ResponseEntity<Map<String,Integer>> getNumberUsers(){
         return ResponseEntity.ok(userService.getPublicNumbers());
+    }
+
+    @PostMapping("/forgetPassword")
+    public ResponseEntity<Map<String,String>> forgetPasssword(@Valid @RequestBody ForgetPasswordRequest email){
+        return ResponseEntity.ok(Map.of(MSG,authService.forgetPassword(email.getEmail())));
     }
 
 

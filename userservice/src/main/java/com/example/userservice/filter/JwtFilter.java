@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -24,7 +27,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
 
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         // Extract the Authorization header from the request
         String authHeader = request.getHeader("Authorization");
@@ -45,20 +48,30 @@ public class JwtFilter extends OncePerRequestFilter {
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
             // Validate the token with the user details
             if (jwtUtil.isTokenValid(token, userDetails.getUsername())) {
-                String role = jwtUtil.extractClaim(token, claims -> claims.get("role", String.class));
-                log.info("User Role from Token: " + role);
+                // Extract userId for future use
+                UUID userId = jwtUtil.extractUserId(token);
+                //                String role = jwtUtil.extractClaim(token, claims -> claims.get("role", String.class));
+//                log.info("User Role from Token: " + role);
 
-                // Create an authentication token with user details and authorities
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                 // Set additional details (e.g., IP, session ID) from the current request
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
+                // ✅ Store userId in authentication details for controller access
+                Map<String, Object> details = new HashMap<>();
+                details.put("userId", userId);
+                details.put("userAgent", request.getHeader("User-Agent"));
+                authToken.setDetails(details);
                 // Set the authentication token in the SecurityContext
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                log.debug("Authenticated user: {} (ID: {})", username, userId);
             }
+
         }
+
 
         // Continue with the next filter in the chain
         filterChain.doFilter(request, response);

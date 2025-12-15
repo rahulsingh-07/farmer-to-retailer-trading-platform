@@ -9,12 +9,13 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Component
 public class JwtUtil {
 
-    @Value("${MY_SHA256_KEY}")
+    @Value("${my_api_key}")
     private String apiKey;
     private static final long EXPIRATION_TIME = 2880000; // 1 day
     private SecretKey key;
@@ -25,10 +26,11 @@ public class JwtUtil {
     }
 
     // Generate token
-    public String generateToken(String username,String role) {
+    public String generateToken(String username, String role, UUID userId) {
         return Jwts.builder()
                 .subject(username)
                 .claim("role", role)
+                .claim("userId", userId.toString())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key,Jwts.SIG.HS256)
@@ -39,6 +41,18 @@ public class JwtUtil {
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+
+    // ✅ Extract userId
+    public UUID extractUserId(String token) {
+        try {
+            String userIdStr = extractClaim(token, claims ->
+                    claims.get("userId", String.class));
+            return UUID.fromString(userIdStr);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid token");
+        }
+    }
+
 
     // Extract custom claim
     public <T> T extractClaim(String token, Function<Claims, T> resolver) {

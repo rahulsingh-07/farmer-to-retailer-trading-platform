@@ -2,6 +2,8 @@ package com.example.userservice.repository;
 
 import com.example.userservice.entity.Users;
 import com.example.userservice.enums.UserStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,9 +17,10 @@ public interface UserRepository extends JpaRepository<Users, UUID> {
 
     Optional<Users> findByUsername(String username);
 
-    @Query("SELECT u FROM Users u WHERE u.status = :status")
-    List<Users> findByStatus(@Param("status") UserStatus status);
+    List<Users> findByUpdatePasswordRequired(boolean required);
 
+    @Query("SELECT u FROM Users u WHERE u.status = :status")
+    Page<Users> findByStatus(@Param("status") UserStatus status, Pageable pageable);
     @Query("SELECT COUNT(u) FROM Users u WHERE u.status = 'ACTIVE'")
     int totalUsers();
 
@@ -33,4 +36,5 @@ public interface UserRepository extends JpaRepository<Users, UUID> {
     @Query("SELECT COUNT(u) FROM Users u WHERE u.status = 'ACTIVE' AND u.role = 'ADMIN'")
     int totalAdmin();
 
+    Optional<Users> findByEmail(String email);
 }

@@ -17,5 +17,12 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+
 server:
   port: 8081
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:dummy}
+  api-key: ${CLOUDINARY_API_KEY:dummy}
+  api-secret: ${CLOUDINARY_API_SECRET:dummy}
+my_api_key: ${MY_SHA256_KEY:this_is_a_test_api_key_32_bytes_min!!}

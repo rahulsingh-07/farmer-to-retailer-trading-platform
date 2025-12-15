@@ -7,6 +7,8 @@ import com.example.userservice.notification.EmailService;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.service.AdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,9 +26,11 @@ public class AdminServiceImp implements AdminService {
         Users user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setStatus(newStatus);
-        user.setUpdateAt(LocalDateTime.now());
         if (newStatus == UserStatus.ACTIVE) {
+            user.setStatus(newStatus);
+            user.setUpdateAt(LocalDateTime.now());
+            user.setUpdatePasswordRequired(true);
+            user.setPasswordResetAttempts(0);
             String msg=tokenService.generateToken(user.getId());
             String userName=user.getUsername();
             emailService.sendPasswordSetupEmail(user.getEmail(),msg,userName,user.getFullName());
@@ -39,11 +43,11 @@ public class AdminServiceImp implements AdminService {
     }
 
 
-
-
-    public List<Users> getPending(){
-        return userRepository.findByStatus(UserStatus.PENDING);
+    public Page<Users> getPending(Pageable pageable) {
+        return userRepository.findByStatus(UserStatus.PENDING, pageable);
     }
+
+
 
 
 }

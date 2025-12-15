@@ -48,11 +48,11 @@ const FarmerDashboard = () => {
           </p>
 
           <div className="fd-cta-row">
-            <Link to="/farmer/crops" className="fd-btn primary">
-              Add new crop
+            <Link to="/farmer/myCrops" className="fd-btn primary">
+              My crops
             </Link>
-            <Link to="/marketplace" className="fd-btn ghost">
-              View marketplace
+            <Link to="/farmer/addCrops" className="fd-btn ghost">
+              Add crop
             </Link>
           </div>
         </div>
@@ -80,29 +80,6 @@ const FarmerDashboard = () => {
             <div className="fd-card-label">{card.label}</div>
           </div>
         ))}
-      </section>
-
-      <section className="fd-section">
-        <div className="fd-section-header">
-          <div>
-            <p className="fd-kicker">Navigation</p>
-            <h2>Quick links</h2>
-          </div>
-          <span className="fd-section-hint">Matches the farmer sidebar menu</span>
-        </div>
-
-        <div className="fd-links-grid">
-          {farmerLinks.map((link) => (
-            <Link key={link.id} to={link.path} className="fd-link-card">
-              <div className="fd-link-icon">{link.icon}</div>
-              <div className="fd-link-copy">
-                <h3>{link.label}</h3>
-                <p>{linkDescriptions[link.id]}</p>
-              </div>
-              <span className="fd-link-arrow">→</span>
-            </Link>
-          ))}
-        </div>
       </section>
 
       <section className="fd-section fd-two-col">

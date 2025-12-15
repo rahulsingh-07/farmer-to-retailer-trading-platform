@@ -13,7 +13,6 @@ import com.example.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -85,7 +84,6 @@ public class UserServiceImp implements UserService {
 
         return map;
     }
-    @GetMapping("/public-numbers")
     public Map<String, Integer> getPublicNumbers() {
         Map<String, Integer> map = new HashMap<>();
         map.put("totalFarmer", userRepository.totalFarmer());

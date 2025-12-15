@@ -14,6 +14,12 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(indexes = {
+        @Index(name = "idx_users_username", columnList = "username"),
+        @Index(name = "idx_users_email", columnList = "email"),
+        @Index(name = "idx_users_phone", columnList = "phoneNumber"),
+        @Index(name = "idx_users_status", columnList = "status")
+})
 public class Users {
     @Id
     @GeneratedValue
@@ -43,6 +49,10 @@ public class Users {
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    private boolean updatePasswordRequired = true;
+
+    private int passwordResetAttempts = 0;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private FarmerDetails farmerDetails;

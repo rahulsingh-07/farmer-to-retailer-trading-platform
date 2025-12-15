@@ -10,7 +10,6 @@ import Login from './auth/Login'
 import SetPassword from './components/SetPassword';
 import "./App.css"
 import FarmerLandingPage from './pages/LandingPage'
-import ProductDetails from './pages/ProjuctDetails'
 import PrivateRoute from './components/PrivateRoute';
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,6 +17,13 @@ import ReviewPage from './components/ReviewPage'
 import RetailerRegForm from './auth/form/retailerRegForm'
 import Sidebar from './components/Sidebar'
 import AddAdmin from './pages/admin/AddAdmin'
+import AddCrop from './pages/farmer/AddCrop'
+import MyCrop from './pages/farmer/MyCrop'
+import ForgotPassword from './auth/ForgotPassword'
+import CropMarketplace from './pages/retailer/CropMarketplace'
+import CropDetailPage from './pages/retailer/CropDetailPage'
+import Notifications from './pages/farmer/Notifications'
+import NotificationDetails from './pages/farmer/NotificationDetails'
 const App = () => {
 
   return (
@@ -27,9 +33,9 @@ const App = () => {
       <Routes>
         <Route path="/" element={ <> <Navbar /> <FarmerLandingPage /> </> } />
 
-
         <Route path="/search" element={<Search />} />
         <Route path="/login" element={ <> <Navbar /> <Login /> </> } />
+        <Route path="/forgot-password" element={ <> <Navbar /> <ForgotPassword /> </> } />
         <Route path="/registerFarmer" element={<> <Navbar /> <FarmerRegForm /> </>} />
         <Route path="/registerRetailer" element={<> <Navbar /> <RetailerRegForm /> </>} />
         <Route path='/allreviews' element={<ReviewPage />} />
@@ -47,6 +53,50 @@ const App = () => {
           }
         />
         <Route
+          path="/farmer/addCrops"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <main className="app-content">
+                <AddCrop />
+              </main>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/farmer/myCrops"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <main className="app-content">
+                <MyCrop />
+              </main>
+            </PrivateRoute>
+          }
+        />
+          <Route
+            path="/farmer/notifications"
+            element={
+              <PrivateRoute>
+                <Sidebar />
+                <main className="app-content">
+                  <Notifications />
+                </main>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/farmer/notifications/:id"
+            element={
+              <PrivateRoute>
+                <Sidebar />
+                <main className="app-content">
+                  <NotificationDetails />
+                </main>
+              </PrivateRoute>
+            }
+          />
+        <Route
           path="/newAdmin"
           element={
             <PrivateRoute>
@@ -57,8 +107,51 @@ const App = () => {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/cropMarketplace"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <main className="app-content">
+                <CropMarketplace />
+              </main>
+            </PrivateRoute>
+          }
+        />
 
-        <Route path="/productdetails/:id" element={<ProductDetails />} />
+        <Route
+          path="/crops/:id"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <main className="app-content">
+                <CropDetailPage />
+              </main>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/retailer/notifications"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <main className="app-content">
+                <Notifications />
+              </main>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/retailer/notifications/:id"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <main className="app-content">
+                <NotificationDetails />
+              </main>
+            </PrivateRoute>
+          }
+        />
       </Routes>
       <ToastContainer theme="colored" position="top-right" autoClose={3000} />
       {/* <Footer /> */}
