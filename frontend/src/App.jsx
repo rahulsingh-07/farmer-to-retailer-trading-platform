@@ -1,8 +1,6 @@
 import React from 'react'
 import "./index.css"
-import Footer from './components/Footer'
 import Navbar from './components/Navbar'
-import Search from './components/Search'
 import { Route, Routes } from 'react-router-dom'
 import RoleDashboard from './auth/RoleDashboard'
 import FarmerRegForm from './auth/form/FarmerRegForm'
@@ -13,7 +11,6 @@ import FarmerLandingPage from './pages/LandingPage'
 import PrivateRoute from './components/PrivateRoute';
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import ReviewPage from './components/ReviewPage'
 import RetailerRegForm from './auth/form/retailerRegForm'
 import Sidebar from './components/Sidebar'
 import AddAdmin from './pages/admin/AddAdmin'
@@ -32,14 +29,10 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={ <> <Navbar /> <FarmerLandingPage /> </> } />
-
-        <Route path="/search" element={<Search />} />
         <Route path="/login" element={ <> <Navbar /> <Login /> </> } />
         <Route path="/forgot-password" element={ <> <Navbar /> <ForgotPassword /> </> } />
         <Route path="/registerFarmer" element={<> <Navbar /> <FarmerRegForm /> </>} />
         <Route path="/registerRetailer" element={<> <Navbar /> <RetailerRegForm /> </>} />
-        <Route path='/allreviews' element={<ReviewPage />} />
-
         <Route path="/set-password" element={<SetPassword />} />
         <Route
           path="/dashboard"
