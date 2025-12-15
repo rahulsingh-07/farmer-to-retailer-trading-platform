@@ -1,0 +1,28 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ "fwrtp-rahul" ]
+    paths: [ 'userservice/**' ]
+  pull_request:
+    branches: [ "fwrtp-rahul" ]
+    paths: [ 'userservice/**' ]
+
+jobs:
+  build-test:
+    name: Build & Test Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+          cache-dependency-path: userservice/pom.xml
+
+      - name: Build and test backend
+        run: cd userservice && mvn clean verify -DskipTests=false
