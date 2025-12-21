@@ -1,6 +1,7 @@
 package com.example.userservice.repository;
 
 import com.example.userservice.entity.Auction;
+import com.example.userservice.enums.AuctionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,9 +22,18 @@ public interface AuctionRepository extends JpaRepository<Auction, UUID> {
     @Query("SELECT currentHighestBid from Auction a WHERE a.id= :id")
     BigDecimal findHighestBid(@Param("id") UUID id);
 
-    // Find all active auctions (for daily notifications)
+    Optional<Auction> findByCropId(UUID id);
+
+    // EXPIRED AUCTIONS (for closing)
+    @Query("SELECT a FROM Auction a " +
+            "JOIN FETCH a.crop c " +
+            "JOIN FETCH c.user u " +
+            "WHERE a.status = :status AND a.endTime <= :now")
+    List<Auction> findExpiredAuctions(@Param("status") AuctionStatus status,
+                                      @Param("now") LocalDateTime now);
+
+    // 2. ACTIVE AUCTIONS (for daily notifications to farmers)
     @Query("SELECT a FROM Auction a WHERE a.status = 'ACTIVE' AND a.endTime > :now AND a.highestBidderId IS NOT NULL")
     List<Auction> findActiveAuctionsBefore(@Param("now") LocalDateTime now);
-
-    Optional<Auction> findByCropId(UUID id);
 }
+

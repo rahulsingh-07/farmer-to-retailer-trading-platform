@@ -1,6 +1,7 @@
 package com.example.userservice.entity;
 
 import com.example.userservice.enums.NotificationType;
+import com.example.userservice.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,12 +22,13 @@ public class Notification {
     @GeneratedValue
     private UUID id;
 
-    // Farmer who receives the notification
+    // who receives the notification
+    private UUID roleId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "farmer_id")
     private Users farmer;
 
-    // Highest bidder for this notification
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bidder_id")
     private Users bidder;
@@ -35,8 +37,12 @@ public class Notification {
     @JoinColumn(name = "auction_id")
     private Auction auction;
 
+    // who receives the notification
     @Enumerated(EnumType.STRING)
-    private NotificationType type; // BID_UPDATE, AUCTION_WON, AUCTION_RUNNING...
+    private UserRole role;
+
+    @Enumerated(EnumType.STRING)
+    private NotificationType type; // BID_UPDATE, AUCTION_WON,
 
     private String title;
     private String message;

@@ -2,23 +2,20 @@ package com.example.userservice.controller;
 
 import com.example.userservice.dto.BidRequest;
 import com.example.userservice.dto.CropResponse;
-import com.example.userservice.entity.Bid;
 import com.example.userservice.entity.Crops;
-import com.example.userservice.farmerService.AuctionService;
-import com.example.userservice.farmerService.BidService;
-import com.example.userservice.farmerService.CropService;
+import com.example.userservice.farmer.AuctionService;
+import com.example.userservice.farmer.BidService;
+import com.example.userservice.farmer.CropService;
 import com.example.userservice.mapper.CropMapper;
-import com.example.userservice.serviceImp.CustomUserDetails;
+import com.example.userservice.serviceimp.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;

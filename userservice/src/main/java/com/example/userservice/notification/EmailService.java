@@ -1,8 +1,8 @@
 package com.example.userservice.notification;
 
+import com.example.userservice.entity.Order;
 import com.example.userservice.entity.Users;
 import com.example.userservice.repository.UserRepository;
-import com.example.userservice.serviceImp.UserServiceImp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -102,4 +102,42 @@ public class EmailService {
         message.setText(body);
         mailSender.send(message);
     }
+    public void notifyFarmerAuctionWon(String farmerEmail,String farmerName,String cropName,BigDecimal price,String retailerName) {
+
+
+        String body =
+                "Hi " + farmerName + ",\n\n" +
+                        "Good news! Your auction for crop \"" + cropName + "\" has ended successfully.\n" +
+                        "Winner (Retailer): " + retailerName + "\n" +
+                        "Final Selling Price: ₹" + price.toPlainString() + "\n\n" +
+                        "You can now contact the retailer to finalize delivery and payment.\n\n" +
+                        "Warm regards,\n" +
+                        "FarmFresh Team";
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(farmerEmail);
+        message.setSubject("Auction Won – Your Crop Has Been Sold");
+        message.setText(body);
+        mailSender.send(message);
+    }
+
+    public void notifyWinner( String retailerEmail,String retailerName,String cropName,BigDecimal price,String farmerName) {
+
+
+        String body =
+                "Hi " + retailerName + ",\n\n" +
+                        "Congratulations! You have won the auction for crop \"" + cropName + "\".\n" +
+                        "Final Purchase Price: ₹" + price.toPlainString() + "\n" +
+                        "Farmer: " + farmerName + "\n\n" +
+                        "Please contact the farmer to arrange payment and delivery.\n\n" +
+                        "Warm regards,\n" +
+                        "FarmFresh Team";
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(retailerEmail);
+        message.setSubject("Congratulations – You Won the Auction");
+        message.setText(body);
+        mailSender.send(message);
+    }
+
 }

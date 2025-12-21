@@ -1,6 +1,6 @@
 package com.example.userservice.filter;
 
-import com.example.userservice.serviceImp.CustomUserDetailsService;
+import com.example.userservice.serviceimp.CustomUserDetailsService;
 import com.example.userservice.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

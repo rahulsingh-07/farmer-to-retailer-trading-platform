@@ -17,5 +17,4 @@ public class NotificationDTO {
     private UUID auctionId;
     private LocalDateTime createdAt;
     private boolean read;
-
 }

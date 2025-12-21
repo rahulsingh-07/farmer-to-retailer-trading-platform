@@ -1,28 +1,23 @@
-package com.example.userservice.farmerService;
+package com.example.userservice.farmer;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.example.userservice.dto.CropImageResponse;
-import com.example.userservice.dto.CropRequest;
-import com.example.userservice.dto.NotificationDTO;
-import com.example.userservice.dto.NotificationResponse;
-import com.example.userservice.entity.Crops;
-import com.example.userservice.entity.CropImage;
-import com.example.userservice.entity.Notification;
-import com.example.userservice.entity.Users;
+import com.example.userservice.dto.*;
+import com.example.userservice.entity.*;
+import com.example.userservice.enums.OrderStatus;
+import com.example.userservice.enums.UserRole;
+import com.example.userservice.exception.CropNotFoundException;
+import com.example.userservice.exception.ImageUploadException;
 import com.example.userservice.mapper.CropMapper;
-import com.example.userservice.repository.CropRepository;
-import com.example.userservice.repository.NotificationRepository;
-import com.example.userservice.repository.UserRepository;
+import com.example.userservice.mapper.FarmerCropMapper;
+import com.example.userservice.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +27,9 @@ public class FarmerService {
     private final CropRepository cropRepository;
     private final Cloudinary cloudinary;
     private final NotificationRepository notificationRepository;
+    private final BidRepository bidRepository;
+    private final FarmerCropMapper farmerCropMapper;
+    private final OrderRepository orderRepository;
 
     public String createCrop(CropRequest request, UUID userId, MultipartFile[] files) {
         Users user = userRepository.findById(userId)
@@ -49,8 +47,8 @@ public class FarmerService {
                 image.setCrop(crop);
 
                 crop.getImages().add(image);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to upload image", e);
+            } catch (IOException e){
+                throw new ImageUploadException("Failed to upload image",e);
             }
         }
 
@@ -58,63 +56,31 @@ public class FarmerService {
         return "Crop added successfully";
     }
 
-    public List<CropRequest> getMyCrop(UUID userId){
-
-        return cropRepository.findByUserId(userId).stream()
-                .map(cropMapper::toDto)
-                .toList();
+    public List<CropResponse> getMyCrops(UUID userId) {
+        List<Crops> crops = cropRepository.findByUserId(userId);
+        return cropMapper.toResponse(crops);  // Uses existing CropMapper
     }
 
-    public List<NotificationDTO> getNotifications(UUID userId) {
-        List<Notification> notifications =
-                notificationRepository.findByFarmerIdOrderByCreatedAtDesc(userId);
-
-        return notifications.stream()
-                .map(notification -> NotificationDTO.builder()
-                        .id(notification.getId())
-                        .bidderFullName(notification.getBidder().getFullName())
-                        .type(notification.getType())
-                        .auctionId(notification.getAuction().getId())
-                        .createdAt(notification.getCreatedAt())
-                        .read(notification.isRead())
-                        .build())
-                .toList();
+    public Map<String,Long> getCropNumber(UUID farmerId){
+        Map<String,Long> map=new HashMap<>();
+        map.put("totalCrops",cropRepository.totalCrops(farmerId));
+        map.put("totalActiveAuction",cropRepository.totalActiveAuctions(farmerId));
+        map.put("totalPendingOrders",orderRepository.countOrdersByFarmer(farmerId, OrderStatus.PENDING));
+        map.put("totalWaitingPayment",orderRepository.countOrdersByFarmer(farmerId,OrderStatus.CONFIRMED));
+        map.put("totalShippedOrders",orderRepository.countOrdersByFarmer(farmerId,OrderStatus.SHIPPED));
+        map.put("totalCompletedDelivery", orderRepository.countOrdersByFarmer(farmerId,OrderStatus.DELIVERED));
+        map.put("totalActiveOrders", orderRepository.countActiveOrdersByFarmer(farmerId));
+        return map;
     }
 
-    @Transactional
-    public NotificationResponse getNotificationsDetails(UUID id) {
-        Notification n=notificationRepository.findNotificationWithDetails(id)
-                .orElseThrow(()->new RuntimeException("Notification not found"));
-        notificationRepository.markAsRead(id);
+    public FarmerCropDetailDto getFarmerCrop(UUID cropId) {
+        Crops crop = cropRepository.findById(cropId)
+                .orElseThrow(() -> new CropNotFoundException("Crop not found: " + cropId));
 
-        return NotificationResponse.builder()
-                .notificationId(n.getId())
-                .message(n.getMessage())
-                .read(n.isRead())
-                .createdAt(n.getCreatedAt())
-                .type(n.getType())
-                .status(n.getAuction().getStatus())
+        UUID auctionId = crop.getAuction().getId();
+        List<Bid> bids = bidRepository.findByAuctionIdOrderByCreatedAtDesc(auctionId);
 
-                // Crop
-                .cropId(n.getAuction().getCrop().getId())
-                .cropName(n.getAuction().getCrop().getCropName())
-                .category(n.getAuction().getCrop().getCategory())
-                .variety(n.getAuction().getCrop().getVariety())
-                .quantity(n.getAuction().getCrop().getQuantity())
-                .unit(n.getAuction().getCrop().getUnit())
-                .imageUrl(n.getAuction().getCrop().getImages()
-                        .stream()
-                        .map(img -> {
-                            CropImageResponse imgRes = new CropImageResponse();
-                            imgRes.setImageUrl(img.getImageUrl());
-                            return imgRes;
-                            })
-                        .toList())
-
-                // Bidder
-                .bidderFullName(n.getBidder().getFullName())
-                .bidderPhoneNumber(n.getBidder().getPhoneNumber())
-                .bidderAddress(n.getBidder().getRetailerDetails().getBusinessAddress())
-                .build();
+        return farmerCropMapper.toFarmerCropDetailDto(crop, bids);
     }
+
 }

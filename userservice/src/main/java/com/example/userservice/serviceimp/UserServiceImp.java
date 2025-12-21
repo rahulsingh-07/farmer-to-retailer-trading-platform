@@ -1,4 +1,4 @@
-package com.example.userservice.serviceImp;
+package com.example.userservice.serviceimp;
 
 import com.example.userservice.config.UsernameGenerator;
 import com.example.userservice.dto.FarmerRegisterRequest;
@@ -6,8 +6,9 @@ import com.example.userservice.dto.RetailerRegisterRequest;
 import com.example.userservice.dto.UserUpdateDTO;
 import com.example.userservice.entity.Users;
 import com.example.userservice.enums.UserRole;
-import com.example.userservice.enums.UserStatus;
 import com.example.userservice.mapper.UserMapper;
+import com.example.userservice.repository.NotificationRepository;
+import com.example.userservice.repository.OrderRepository;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,38 +26,39 @@ public class UserServiceImp implements UserService {
     private final UserRepository userRepository;
     private final UsernameGenerator usernameGenerator;
     private final PasswordEncoder passwordEncoder;
+    private final OrderRepository orderRepository;
+    private final NotificationRepository notificationRepository;
 
     @Override
     public String createFarmerUser(FarmerRegisterRequest req) {
-        String generatedUsername = usernameGenerator.generate(UserRole.FARMER);
-        String generatedPwd=usernameGenerator.generatePassword();
-        Users user = UserMapper.toFarmerUser(req, passwordEncoder.encode(generatedPwd), generatedUsername);
-        userRepository.save(user);
-        return "Registration successful";
+        try {
+            String generatedUsername = usernameGenerator.generate(UserRole.FARMER);
+            String generatedPwd = usernameGenerator.generatePassword();
+            Users user = UserMapper.toFarmerUser(req, passwordEncoder.encode(generatedPwd), generatedUsername);
+            userRepository.save(user);
+            return "Registration successful";
+        } catch (IllegalArgumentException  | NullPointerException e) {
+            return "Registration failed: " + e.getMessage();  // "Email cannot be null"
+        } catch (Exception e) {
+            return "Registration failed: Unexpected error occurred";
+        }
     }
     @Override
     public String createRetailerUser(RetailerRegisterRequest req) {
-        String generatedUsername = usernameGenerator.generate(UserRole.RETAILER);
-        String generatedPwd=usernameGenerator.generatePassword();
-        Users user = UserMapper.toRetailerUser(req, passwordEncoder.encode(generatedPwd), generatedUsername);
-        userRepository.save(user);
-        return "Registration successful";
+        try {
+            String generatedUsername = usernameGenerator.generate(UserRole.RETAILER);
+            String generatedPwd = usernameGenerator.generatePassword();
+            Users user = UserMapper.toRetailerUser(req, passwordEncoder.encode(generatedPwd), generatedUsername);
+            userRepository.save(user);
+            return "Registration successful";
+        }catch (IllegalArgumentException | NullPointerException e) {
+            return "Registration failed: " + e.getMessage();
+        }catch (Exception e) {
+            return "Registration failed: Unexpected error occurred";
+        }
     }
 
-    @Override
-    public Users createAdminUser(Users req) {
-        String generatedPwd=usernameGenerator.generatePassword();
-        System.out.println("password: "+generatedPwd);
-        String generatedUsername = usernameGenerator.generate(UserRole.ADMIN);
-        System.out.println("Username: "+generatedUsername);
-        req.setUsername(generatedUsername);
-        req.setPassword(passwordEncoder.encode(generatedPwd));
-        req.setRole(UserRole.ADMIN);
-        req.setStatus(UserStatus.ACTIVE);
-        req.setCreatedAt(LocalDateTime.now());
-        userRepository.save(req);
-        return req;
-    }
+
 
     public Users updateUserPartially(UUID id, UserUpdateDTO patchDTO) {
         Users user = userRepository.findById(id)
@@ -92,4 +94,12 @@ public class UserServiceImp implements UserService {
     }
 
 
+    public Map<String, Long> dashboardValues(UUID userId) {
+        Map<String,Long> map=new HashMap<>();
+        map.put("needConfirmation",orderRepository.countNeedConfirmedOrderByRetailerId(userId));
+        map.put("confirmed",orderRepository.countConfirmedOrderByRetailerId(userId));
+        map.put("shipped",orderRepository.countShippedOrderByRetailerId(userId));
+        map.put("notifications",notificationRepository.countUnreadByUserId(userId));
+        return map;
+    }
 }

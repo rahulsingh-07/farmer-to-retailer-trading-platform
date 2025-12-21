@@ -1,4 +1,4 @@
-package com.example.userservice.serviceImp;
+package com.example.userservice.serviceimp;
 
 import com.example.userservice.entity.PasswordResetToken;
 import com.example.userservice.repository.PasswordResetTokenRepository;

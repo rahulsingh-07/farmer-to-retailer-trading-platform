@@ -1,15 +1,17 @@
-package com.example.userservice.farmerService;
+package com.example.userservice.farmer;
 
 import com.example.userservice.entity.Auction;
 import com.example.userservice.entity.Crops;
 import com.example.userservice.entity.Users;
-import com.example.userservice.enums.AuctionStatus;
+import com.example.userservice.enums.NotificationType;
 import com.example.userservice.notification.EmailService;
 import com.example.userservice.repository.AuctionRepository;
 import com.example.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuctionService {
     private final AuctionRepository auctionRepository;
     private final EmailService emailService;
@@ -28,44 +31,80 @@ public class AuctionService {
 
 
 
-    // ✅ Use repository method
+    // Use repository method
     public boolean isAuctionActive(UUID auctionId) {
         return auctionRepository.findActiveAuctionById(auctionId, LocalDateTime.now())
                 .isPresent();
     }
 
-    @Scheduled(cron = "0 0 8 * * ?") // Daily 8AM
+    @Scheduled(cron = "0 0 12 * * ?") // Daily 12AM
+    @Transactional
     public void sendDailyHighestBidNotifications() {
-        System.out.println("Scheduler running...");
         LocalDateTime now = LocalDateTime.now();
         List<Auction> activeAuctions = auctionRepository.findActiveAuctionsBefore(now);
 
         activeAuctions.forEach(auction -> {
-            Crops crop = auction.getCrop();
-            Users farmer = crop.getUser();
-            UUID bidderId = auction.getHighestBidderId();
-            System.out.println(" bidder : "+bidderId);
-            Users highestBidder = userRepository.findById(bidderId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            BigDecimal highestBid = auction.getCurrentHighestBid();
+            try {
+                //Validate auction data
+                Crops crop = auction.getCrop();
+                if (crop == null) {
+                    log.warn("Skipping auction {} - no crop", auction.getId());
+                    return;
+                }
 
-            notificationService.createBidUpdateNotification(
-                    farmer,
-                    highestBidder,
-                    auction,
-                    now,
-                    "New Highest Bid",
-                    String.format("₹%s for %s (%d days left)",
-                            highestBid, crop.getCropName(),
-                            ChronoUnit.DAYS.between(now, auction.getEndTime()))
-            );
+                Users farmer = crop.getUser();
+                if (farmer == null) {
+                    log.warn("Skipping auction {} - no farmer", auction.getId());
+                    return;
+                }
 
+                UUID bidderId = auction.getHighestBidderId();
+                if (bidderId == null) {
+                    log.warn("Skipping auction {} - no bidder", auction.getId());
+                    return;
+                }
 
-            // 2. Send Gmail (async)
-            CompletableFuture.runAsync(() ->
-                    emailService.sendDailyBidNotification(
-                            farmer.getId(), crop.getCropName(),ChronoUnit.DAYS.between(now, auction.getEndTime()), highestBid)
-            );
+                // Get bidder SAFELY
+                Users highestBidder = userRepository.findById(bidderId)
+                        .orElse(null);
+                if (highestBidder == null) {
+                    log.warn("Skipping auction {} - bidder {} not found", auction.getId(), bidderId);
+                    return;  // ✅ Skip gracefully
+                }
+
+                BigDecimal highestBid = auction.getCurrentHighestBid() != null
+                        ? auction.getCurrentHighestBid()
+                        : BigDecimal.ZERO;
+
+                // Create notification
+                notificationService.createBidUpdateNotification(
+                        farmer.getRole(),
+                        farmer.getId(),
+                        farmer,
+                        highestBidder,
+                        auction,
+                        now,
+                        "New Highest Bid",
+                        String.format("₹%s for %s (%d days left)",
+                                highestBid, crop.getCropName(),
+                                ChronoUnit.DAYS.between(now, auction.getEndTime())),
+                        NotificationType.BID_UPDATE
+                );
+
+                // 4. Send email ASYNC
+                CompletableFuture.runAsync(() ->
+                        emailService.sendDailyBidNotification(
+                                farmer.getId(),
+                                crop.getCropName(),
+                                ChronoUnit.DAYS.between(now, auction.getEndTime()),
+                                highestBid)
+                );
+
+            } catch (Exception e) {
+                log.error("Failed to process auction notifications for auction {}: {}",
+                        auction.getId(), e.getMessage(), e);
+                // Continue to next auction - DON'T break batch!
+            }
         });
     }
 }

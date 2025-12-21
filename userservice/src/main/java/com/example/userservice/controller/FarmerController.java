@@ -1,19 +1,15 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.dto.CropRequest;
-import com.example.userservice.dto.CropResponse;
-import com.example.userservice.dto.NotificationDTO;
-import com.example.userservice.dto.NotificationResponse;
-import com.example.userservice.entity.Notification;
-import com.example.userservice.entity.Users;
-import com.example.userservice.farmerService.FarmerService;
-import com.example.userservice.serviceImp.CustomUserDetails;
+import com.example.userservice.dto.*;
+import com.example.userservice.farmer.FarmerService;
+import com.example.userservice.farmer.NotificationService;
+import com.example.userservice.order.OrderService;
+import com.example.userservice.serviceimp.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,12 +20,15 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/farmer")
+@Slf4j
 public class FarmerController {
     private final FarmerService farmerService;
+    private final NotificationService notificationService;
+    private final OrderService orderService;
 
 
     @PostMapping("/addCrop")
-    public ResponseEntity<?> createCrop(
+    public ResponseEntity<Map<String,String>> createCrop(
             @Valid @RequestPart("request") CropRequest request,
             @RequestPart("images") MultipartFile[] files,
             @AuthenticationPrincipal CustomUserDetails principal) {
@@ -38,19 +37,32 @@ public class FarmerController {
         return ResponseEntity.ok(Map.of("message", msg));
     }
 
+    @GetMapping("/totalCrops")
+    public ResponseEntity<Map<String,Long>> totalCrops(@AuthenticationPrincipal CustomUserDetails principal){
+        return ResponseEntity.ok(farmerService.getCropNumber(principal.getUserId()));
+    }
+
+    @GetMapping("/crop/{id}")
+    public ResponseEntity<FarmerCropDetailDto> cropDetails(@PathVariable UUID id){
+        return ResponseEntity.ok(farmerService.getFarmerCrop(id));
+    }
 
     @GetMapping("/crops")
-    public List<CropRequest> getMyCrops(@AuthenticationPrincipal CustomUserDetails principal) {
-        return farmerService.getMyCrop(principal.getUserId());
+    public ResponseEntity<List<CropResponse>> getMyCrops(@AuthenticationPrincipal CustomUserDetails principal) {
+        List<CropResponse> crops = farmerService.getMyCrops(principal.getUserId());
+        return ResponseEntity.ok(crops);
     }
 
-    @GetMapping("/notifications")
-    public List<NotificationDTO> getFarmerNotifications(@AuthenticationPrincipal CustomUserDetails principal ) {
-        return farmerService.getNotifications(principal.getUserId());
+    @PostMapping("/order/{orderId}/confirmed")
+    public ResponseEntity<Map<String,String>> confirmOrder(@PathVariable UUID orderId){
+        return ResponseEntity.ok(Map.of("message",orderService.getOrderConfirmed(orderId)));
     }
 
-    @GetMapping("/notifications/{id}")
-    public NotificationResponse getNotificationDetails(@PathVariable UUID id){
-        return farmerService.getNotificationsDetails(id);
-    }
+
+
+
+
+
+
+
 }

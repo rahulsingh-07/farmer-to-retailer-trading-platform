@@ -1,6 +1,5 @@
 package com.example.userservice.entity;
 
-import com.example.userservice.enums.AuctionStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

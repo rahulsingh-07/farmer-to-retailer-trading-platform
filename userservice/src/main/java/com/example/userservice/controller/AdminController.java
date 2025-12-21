@@ -1,9 +1,10 @@
 package com.example.userservice.controller;
 
+import com.example.userservice.dto.AdminDTO;
 import com.example.userservice.entity.Users;
 import com.example.userservice.enums.UserStatus;
-import com.example.userservice.serviceImp.AdminServiceImp;
-import com.example.userservice.serviceImp.UserServiceImp;
+import com.example.userservice.serviceimp.AdminServiceImp;
+import com.example.userservice.serviceimp.UserServiceImp;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,7 +26,7 @@ public class AdminController {
     private final UserServiceImp userService;
 
     @PatchMapping("/user/{id}/status")
-    public ResponseEntity<?> changeStatus(@PathVariable UUID id, @RequestParam UserStatus status) {
+    public ResponseEntity<Map<String,Object>> changeStatus(@PathVariable UUID id, @RequestParam UserStatus status) {
         Users updatedUser = adminService.updateStatus(id, status);
 
         return ResponseEntity.ok(
@@ -60,8 +60,8 @@ public class AdminController {
     }
 
     @PostMapping("/newAdmin")
-    public ResponseEntity<Users> retailer(@Valid @RequestBody Users user){
-        return ResponseEntity.ok(userService.createAdminUser(user));
+    public ResponseEntity<Map<String,String>> retailer(@Valid @RequestBody AdminDTO admin){
+        return ResponseEntity.ok(Map.of("message",adminService.createAdminUser(admin)));
 
     }
 

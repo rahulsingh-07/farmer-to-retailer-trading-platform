@@ -12,9 +12,15 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 
 public class UserMapper {
+    private UserMapper() {
+        throw new UnsupportedOperationException("Utility class");
+    }
 
     // FARMER REGISTRATION
     public static Users toFarmerUser(FarmerRegisterRequest req, String encodedPassword, String username) {
+        if (req.getEmail() == null) {
+            throw new IllegalArgumentException("Email cannot be null");
+        }
         Users user = new Users();
         user.setFullName(req.getFullName());
         user.setEmail(req.getEmail().toLowerCase(Locale.ROOT));
@@ -38,6 +44,9 @@ public class UserMapper {
 
     // RETAILER REGISTRATION
     public static Users toRetailerUser(RetailerRegisterRequest req, String encodedPassword, String username) {
+        if (req.getEmail() == null) {
+            throw new IllegalArgumentException("Email cannot be null");
+        }
         Users user = new Users();
         user.setFullName(req.getFullName());
         user.setEmail(req.getEmail().toLowerCase(Locale.ROOT));

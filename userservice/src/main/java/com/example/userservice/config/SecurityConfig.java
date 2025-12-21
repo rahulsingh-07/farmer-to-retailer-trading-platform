@@ -1,7 +1,7 @@
 package com.example.userservice.config;
 
 import com.example.userservice.filter.JwtFilter;
-import com.example.userservice.serviceImp.CustomUserDetailsService;
+import com.example.userservice.serviceimp.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

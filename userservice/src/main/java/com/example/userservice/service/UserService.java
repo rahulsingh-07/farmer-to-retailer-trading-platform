@@ -10,6 +10,4 @@ public interface UserService {
     String createFarmerUser(FarmerRegisterRequest req);
 
     String createRetailerUser(RetailerRegisterRequest req);
-
-    Users createAdminUser(Users req); // admin calling only
 }

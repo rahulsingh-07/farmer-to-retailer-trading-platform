@@ -1,4 +1,4 @@
-package com.example.userservice.serviceImp;
+package com.example.userservice.serviceimp;
 
 import com.example.userservice.entity.Users;
 import com.example.userservice.notification.EmailService;
@@ -14,6 +14,8 @@ import java.util.List;
 public class PasswordReminderService {
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private static final int MAX_ATTEMPTS = 3;
+
 
     @Scheduled(cron = "0 0 10 * * *") // daily at 10 AM
     public void runReminderTask(){
@@ -23,7 +25,7 @@ public class PasswordReminderService {
 
             int attempts = user.getPasswordResetAttempts();
 
-            if (attempts >= 3) {
+            if (attempts >= MAX_ATTEMPTS) {
                 emailService.sendDeletionEmail(user.getEmail(),user.getFullName());
                 userRepository.delete(user);
                 continue;

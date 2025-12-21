@@ -2,7 +2,7 @@ package com.example.userservice.service;
 import com.example.userservice.entity.Users;
 import com.example.userservice.notification.EmailService;
 import com.example.userservice.repository.UserRepository;
-import com.example.userservice.serviceImp.PasswordReminderService;
+import com.example.userservice.serviceimp.PasswordReminderService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

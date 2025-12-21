@@ -1,4 +1,4 @@
-package com.example.userservice.farmerService;
+package com.example.userservice.farmer;
 
 import com.example.userservice.entity.Crops;
 import com.example.userservice.exception.CropNotFoundException;

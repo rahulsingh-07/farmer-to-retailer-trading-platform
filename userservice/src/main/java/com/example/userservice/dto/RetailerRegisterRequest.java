@@ -13,7 +13,7 @@ public class RetailerRegisterRequest {
     private String email;
     @NotBlank(message = "Phone cannot be empty")
     private String phoneNumber;
-    @NotBlank(message = "shpoName cannot be empty")
+    @NotBlank(message = "shopName cannot be empty")
     private String shopName;
     @NotBlank(message = "businessAddress cannot be empty")
     private String businessAddress;

@@ -2,9 +2,9 @@ package com.example.userservice.controller;
 
 import com.example.userservice.dto.*;
 import com.example.userservice.exception.UserNotFoundException;
-import com.example.userservice.serviceImp.AuthServiceImp;
-import com.example.userservice.serviceImp.TokenServiceImp;
-import com.example.userservice.serviceImp.UserServiceImp;
+import com.example.userservice.serviceimp.AuthServiceImp;
+import com.example.userservice.serviceimp.TokenServiceImp;
+import com.example.userservice.serviceimp.UserServiceImp;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -53,7 +53,7 @@ public class AuthController {
 
 
     @GetMapping("/validate-token")
-    public ResponseEntity<?> validateToken(@RequestParam String token) {
+    public ResponseEntity<Map<String,Object>> validateToken(@RequestParam String token) {
         try {
             boolean isValid = tokenService.validateToken(token);
             return ResponseEntity.ok(Map.of("valid", isValid));
@@ -70,7 +70,7 @@ public class AuthController {
 
             return ResponseEntity.ok(Map.of(MSG, "Password set successfully"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of(MSG, e.getMessage()));
         }
     }
 
@@ -80,7 +80,7 @@ public class AuthController {
     }
 
     @PostMapping("/forgetPassword")
-    public ResponseEntity<Map<String,String>> forgetPasssword(@Valid @RequestBody ForgetPasswordRequest email){
+    public ResponseEntity<Map<String,String>> forgetPassword(@Valid @RequestBody ForgetPasswordRequest email){
         return ResponseEntity.ok(Map.of(MSG,authService.forgetPassword(email.getEmail())));
     }
 

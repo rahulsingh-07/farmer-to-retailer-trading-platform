@@ -1,6 +1,5 @@
-package com.example.userservice.serviceImp;
+package com.example.userservice.serviceimp;
 
-import com.example.userservice.dto.ForgetPasswordRequest;
 import com.example.userservice.dto.LoginResponse;
 import com.example.userservice.dto.LoginUser;
 import com.example.userservice.entity.PasswordResetToken;
@@ -14,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.ott.InvalidOneTimeTokenException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -59,7 +59,7 @@ public class AuthServiceImp implements AuthService {
 
         // Validate token
         if (!tokenService.validateToken(token)) {
-            throw new RuntimeException("Invalid or expired token");
+            throw new InvalidOneTimeTokenException("Invalid or expired token");
         }
 
         // Set password for user
