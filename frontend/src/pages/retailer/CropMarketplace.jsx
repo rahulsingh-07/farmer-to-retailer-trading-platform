@@ -43,17 +43,24 @@ const CropMarketplace = () => {
       const data = await api.get(`/public/crops?${params.toString()}`); // public endpoint returns JSON directly
 
       const rawContent = data?.content || [];
-      const normalized = rawContent.map((item) => ({
-        ...item,
-        images: item.images
-          ? item.images
-          : Array.isArray(item.imageUrl)
-          ? item.imageUrl.map((img) => img.imageUrl)
-          : item.imageUrl
-          ? [item.imageUrl]
-          : [],
-        status: item.status || item.auctionStatus,
-      }));
+      const normalized = rawContent.map((item) => {
+        let images = [];
+        if (item.images) {
+          images = item.images;
+        } else if (Array.isArray(item.imageUrl)) {
+          images = item.imageUrl.map((img) => img.imageUrl);
+        } else if (item.imageUrl) {
+          images = [item.imageUrl];
+        }
+
+        const status = item.status || item.auctionStatus;
+
+        return {
+          ...item,
+          images,
+          status,
+        };
+      });
 
       setCrops(normalized);
       setPageMeta({
@@ -74,21 +81,22 @@ const CropMarketplace = () => {
     }));
   };
 
+  let gridContent;
+  if (loading) {
+    gridContent = <div className="loading-skeleton">Loading crops...</div>;
+  } else if (crops.length === 0) {
+    gridContent = <div className="empty-state">No crops found. Adjust filters.</div>;
+  } else {
+    gridContent = crops.map((crop) => (
+      <CropCard key={crop.id} crop={crop} user={user} token={token} />
+    ));
+  }
+
   return (
     <div className="marketplace-container">
       <FiltersPanel filters={filters} setFilters={setFilters} />
 
-      <div className="marketplace-grid">
-        {loading ? (
-          <div className="loading-skeleton">Loading crops...</div>
-        ) : crops.length === 0 ? (
-          <div className="empty-state">No crops found. Adjust filters.</div>
-        ) : (
-          crops.map((crop) => (
-            <CropCard key={crop.id} crop={crop} user={user} token={token} />
-          ))
-        )}
-      </div>
+      <div className="marketplace-grid">{gridContent}</div>
 
       {pageMeta.totalPages > 1 && (
         <div className="pagination">

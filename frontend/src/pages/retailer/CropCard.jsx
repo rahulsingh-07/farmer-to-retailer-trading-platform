@@ -1,5 +1,6 @@
 // CropCard.jsx
 import React from "react";
+import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import "../../css/CropCard.css";
 
@@ -16,8 +17,19 @@ const CropCard = ({ crop }) => {
     navigate(`/crops/${crop.id}`);
   };
 
+  const daysLeftValue = Number(crop.daysLeft);
+  const timeLeftLabel = Number.isFinite(daysLeftValue)
+    ? daysLeftValue > 1
+      ? `${daysLeftValue} days left`
+      : daysLeftValue === 1
+        ? "1 day left"
+        : daysLeftValue === 0
+          ? "Ends today"
+          : "Auction closed"
+    : "Auction status";
+
   return (
-    <div className="fk-card" onClick={handleClick}>
+    <button type="button" className="fk-card" onClick={handleClick}>
       <div className="fk-card-left">
         <img src={mainImage} alt={crop.cropName} />
       </div>
@@ -58,14 +70,36 @@ const CropCard = ({ crop }) => {
           </div>
 
           <div className="fk-right-meta">
-            <span className="fk-days">
-              {crop.daysLeft > 0 ? `${crop.daysLeft} days left` : "Auction closed"}
-            </span>
+            <span className="fk-days">{timeLeftLabel}</span>
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
+};
+
+CropCard.propTypes = {
+  crop: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    cropName: PropTypes.string.isRequired,
+    variety: PropTypes.string,
+    category: PropTypes.string,
+    location: PropTypes.string,
+    quantity: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    unit: PropTypes.string,
+    pricePerUnit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    currentHighestBid: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    daysLeft: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    images: PropTypes.arrayOf(PropTypes.string),
+    imageUrl: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.arrayOf(
+        PropTypes.shape({
+          imageUrl: PropTypes.string,
+        })
+      ),
+    ]),
+  }).isRequired,
 };
 
 export default CropCard;

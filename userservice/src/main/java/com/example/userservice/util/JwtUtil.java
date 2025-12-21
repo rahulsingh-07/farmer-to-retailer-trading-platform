@@ -1,4 +1,4 @@
-package com.example.userservice.util;
+package com.example.userservice.common;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -17,7 +17,7 @@ public class JwtUtil {
 
     @Value("${my_api_key}")
     private String apiKey;
-    private static final long EXPIRATION_TIME = 2880000; // 1 day
+    private static final long EXPIRATION_TIME = 86_400_000L; // 1 day
     private SecretKey key;
 
     @PostConstruct

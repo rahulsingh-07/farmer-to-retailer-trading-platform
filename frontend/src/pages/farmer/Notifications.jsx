@@ -1,41 +1,35 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../utils/api";
 import "../../css/Notifications.css";
 
 const statusOptions = [
-  { label: "All", value: "ALL" },
-  { label: "Unread", value: "UNREAD" },
-  { label: "Read", value: "READ" },
+  { value: "ALL", label: "All" },
+  { value: "READ", label: "Read" },
+  { value: "UNREAD", label: "Unread" },
 ];
 
 const Notifications = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const basePath = location.pathname.startsWith("/retailer")
-    ? "/retailer/notifications"
-    : "/farmer/notifications";
-  const [loading, setLoading] = useState(false);
+  const basePath = "/farmer/notifications";
+
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [actionOpen, setActionOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
+  const [actionOpen, setActionOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState(new Set());
 
   const fetchNotifications = async () => {
     setLoading(true);
     try {
-      const data = await api.get("/farmer/notifications", token);
-      const normalized = (data || []).map((item) => ({
-        ...item,
-        read: Boolean(item.read),
-      }));
-      setNotifications(normalized);
+      const data = await api.get("/user/notifications", token);
+      setNotifications(Array.isArray(data) ? data : data?.content || []);
     } catch (err) {
-      toast.error(err.message || "Unable to load notifications");
+      toast.error(err.message || "Failed to load notifications");
     } finally {
       setLoading(false);
     }
@@ -43,38 +37,44 @@ const Notifications = () => {
 
   useEffect(() => {
     fetchNotifications();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filtered = useMemo(() => {
-    if (statusFilter === "READ") return notifications.filter((n) => n.read);
-    if (statusFilter === "UNREAD") return notifications.filter((n) => !n.read);
-    return notifications;
+    return notifications.filter((n) => {
+      if (statusFilter === "READ") return !!n.read;
+      if (statusFilter === "UNREAD") return !n.read;
+      return true;
+    });
   }, [notifications, statusFilter]);
 
   const toggleSelect = (id) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };
 
-  const markReadLocal = () => {
+  const deleteSelected = async () => {
     if (selectedIds.size === 0) return;
-    setNotifications((prev) =>
-      prev.map((n) => (selectedIds.has(n.id) ? { ...n, read: true } : n))
-    );
-    setSelectedIds(new Set());
-    toast.info("Marked as read (local). Connect backend when ready.");
-  };
-
-  const deleteLocal = () => {
-    if (selectedIds.size === 0) return;
-    setNotifications((prev) => prev.filter((n) => !selectedIds.has(n.id)));
-    setSelectedIds(new Set());
-    toast.info("Deleted (local). Connect backend when ready.");
+    const ids = Array.from(selectedIds);
+    const query = ids.map((id) => `ids=${encodeURIComponent(id)}`).join("&");
+    setLoading(true);
+    try {
+      const res = await api.delete(`/user/notifications/delete?${query}`, token);
+      const message = res?.message || "Deleted successfully";
+      setNotifications((prev) => prev.filter((n) => !selectedIds.has(n.id)));
+      setSelectedIds(new Set());
+      toast.success(message);
+    } catch (err) {
+      toast.error(err.message || "Delete failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const formatTime = (iso) => {
@@ -104,8 +104,7 @@ const Notifications = () => {
               </button>
               {actionOpen && (
                 <div className="dropdown-menu">
-                  <button onClick={markReadLocal}>Mark as read</button>
-                  <button onClick={deleteLocal}>Delete</button>
+                  <button onClick={deleteSelected}>Delete Marked</button>
                 </div>
               )}
             </div>
@@ -121,8 +120,7 @@ const Notifications = () => {
                   setActionOpen(false);
                 }}
               >
-                {statusOptions.find((o) => o.value === statusFilter)?.label ||
-                  "All"}
+                {statusOptions.find((o) => o.value === statusFilter)?.label || "All"}
               </button>
               {statusOpen && (
                 <div className="dropdown-menu">
@@ -146,16 +144,22 @@ const Notifications = () => {
 
       {/* List */}
       <div className="notif-list">
-        {loading ? (
-          <div className="notif-skeleton-wrap">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="notif-card skeleton" />
-            ))}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="notif-empty">No notifications</div>
-        ) : (
-          filtered.map((n) => {
+        {(() => {
+          if (loading) {
+            return (
+              <div className="notif-skeleton-wrap">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="notif-card skeleton" />
+                ))}
+              </div>
+            );
+          }
+
+          if (filtered.length === 0) {
+            return <div className="notif-empty">No notifications</div>;
+          }
+
+          return filtered.map((n) => {
             const selected = selectedIds.has(n.id);
             return (
               <div
@@ -172,9 +176,7 @@ const Notifications = () => {
 
                 <div className="notif-cell avatar-cell">
                   <div className="avatar-circle">
-                    {(n.bidderFullName || "?")
-                      .slice(0, 1)
-                      .toUpperCase()}
+                    {(n.bidderFullName || "?").slice(0, 1).toUpperCase()}
                   </div>
                 </div>
 
@@ -182,17 +184,11 @@ const Notifications = () => {
                   {n.bidderFullName || "Anonymous"}
                 </div>
 
-                <div className="notif-cell type-cell">
-                  {n.type || ""}
-                </div>
+                <div className="notif-cell type-cell">{n.type || ""}</div>
 
-                <div className="notif-cell auction-cell">
-                  {n.auctionId || "—"}
-                </div>
+                <div className="notif-cell auction-cell">{n.auctionId || "—"}</div>
 
-                <div className="notif-cell time-cell">
-                  {formatTime(n.createdAt)}
-                </div>
+                <div className="notif-cell time-cell">{formatTime(n.createdAt)}</div>
 
                 <div className="notif-cell status-cell">
                   {n.read ? "Read" : "Unread"}
@@ -212,8 +208,8 @@ const Notifications = () => {
                 </div>
               </div>
             );
-          })
-        )}
+          });
+        })()}
       </div>
     </div>
   );

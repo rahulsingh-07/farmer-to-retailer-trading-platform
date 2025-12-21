@@ -5,10 +5,10 @@ import { render, screen, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Login from "../Login";
 
-var mockLogin;
-var mockLogout;
-var mockUser;
-var mockNavigate;
+let mockLogin;
+let mockLogout;
+let mockUser;
+let mockNavigate;
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");

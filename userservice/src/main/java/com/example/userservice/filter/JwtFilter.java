@@ -1,7 +1,7 @@
 package com.example.userservice.filter;
 
-import com.example.userservice.serviceImp.CustomUserDetailsService;
-import com.example.userservice.util.JwtUtil;
+import com.example.userservice.common.CustomUserDetailsService;
+import com.example.userservice.common.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,8 +50,6 @@ public class JwtFilter extends OncePerRequestFilter {
             if (jwtUtil.isTokenValid(token, userDetails.getUsername())) {
                 // Extract userId for future use
                 UUID userId = jwtUtil.extractUserId(token);
-                //                String role = jwtUtil.extractClaim(token, claims -> claims.get("role", String.class));
-//                log.info("User Role from Token: " + role);
 
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

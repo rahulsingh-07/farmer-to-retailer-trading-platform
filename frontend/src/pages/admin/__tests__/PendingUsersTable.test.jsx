@@ -12,7 +12,7 @@ describe("PendingUsersTable", () => {
     localStorage.clear();
     localStorage.setItem("token", "test-token");
     vi.clearAllMocks();
-    global.fetch = vi.fn();
+    globalThis.fetch = vi.fn();
   });
 
   afterEach(() => {

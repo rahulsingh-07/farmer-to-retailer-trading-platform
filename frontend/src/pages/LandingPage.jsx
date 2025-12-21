@@ -15,7 +15,7 @@ const FarmerLandingPage = () => {
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
-      if (window.scrollY > 300 && !showStats) {
+      if (window.scrollY > 0 && !showStats) {
         setShowStats(true);
       }
     };

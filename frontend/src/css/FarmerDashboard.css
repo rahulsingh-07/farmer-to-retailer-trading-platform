@@ -59,9 +59,9 @@
 }
 
 .fd-btn.primary {
-  background: linear-gradient(120deg, #16a34a, #0ea5e9);
+  background: linear-gradient(120deg, #0f5132, #0b4f6c);
   color: #f8fafc;
-  box-shadow: 0 12px 24px rgba(16, 163, 74, 0.18);
+  box-shadow: 0 12px 24px rgba(15, 81, 50, 0.18);
 }
 
 .fd-btn.primary:hover {
@@ -112,8 +112,8 @@
 }
 
 .fd-hero-pills span {
-  background: rgba(255, 255, 255, 0.08);
-  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.24);
+  color: #0f172a;
   padding: 8px 12px;
   border-radius: 999px;
   font-size: 0.85rem;
@@ -304,14 +304,14 @@
 .fd-tag {
   padding: 4px 10px;
   border-radius: 999px;
-  background: #ecfdf3;
-  color: #16a34a;
+  background: #d1fae5;
+  color: #065f46;
   font-weight: 700;
   font-size: 0.85rem;
 }
 
 .fd-list-arrow {
-  color: #94a3b8;
+  color: #1f2937;
   font-weight: 700;
 }
 
@@ -345,7 +345,7 @@
 }
 
 .fd-market-change.up {
-  color: #16a34a;
+  color: #072114;
 }
 
 .fd-market-change.down {

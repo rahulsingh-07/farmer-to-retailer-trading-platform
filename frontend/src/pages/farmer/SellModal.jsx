@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import "../../css/NotificationDetails.css";
 
 const SellModal = ({ notification, onClose, onConfirm, disabled }) => {
@@ -25,6 +26,22 @@ const SellModal = ({ notification, onClose, onConfirm, disabled }) => {
 			</div>
 		</div>
 	);
+};
+
+SellModal.propTypes = {
+	notification: PropTypes.shape({
+		auctionId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+		bidderFullName: PropTypes.string,
+	}),
+	onClose: PropTypes.func.isRequired,
+	onConfirm: PropTypes.func,
+	disabled: PropTypes.bool,
+};
+
+SellModal.defaultProps = {
+	notification: null,
+	onConfirm: undefined,
+	disabled: false,
 };
 
 export default SellModal;

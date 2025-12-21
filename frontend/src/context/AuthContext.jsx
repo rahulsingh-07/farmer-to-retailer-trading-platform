@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
+import PropTypes from 'prop-types';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
 
@@ -8,15 +9,16 @@ function parseJwt(token) {
   if (!token) return null;
   try {
     const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const base64 = base64Url.replaceAll('-', '+').replaceAll('_', '/');
     const jsonPayload = decodeURIComponent(
       atob(base64)
         .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .map((c) => '%' + ('00' + c.codePointAt(0).toString(16)).slice(-2))
         .join('')
     );
     return JSON.parse(jsonPayload);
   } catch (e) {
+    console.error('Failed to parse JWT', e);
     return null;
   }
 }
@@ -37,7 +39,7 @@ const [loading, setLoading] = useState(true);
   const setLogoutTimer = (token) => {
     clearLogoutTimer();
     const payload = parseJwt(token);
-    if (payload && payload.exp) {
+    if (payload?.exp) {
       const expiryTimeMs = payload.exp * 1000;
       const currentTimeMs = Date.now();
       const timeLeft = expiryTimeMs - currentTimeMs;
@@ -60,7 +62,7 @@ const [loading, setLoading] = useState(true);
     const savedToken = rawToken.trim().replace(/\s/g, "");
     const payload = parseJwt(savedToken);
 
-    if (payload && payload.sub) {
+    if (payload?.sub) {
       const expiryTimeMs = payload.exp ? payload.exp * 1000 : null;
 
       if (expiryTimeMs && expiryTimeMs > Date.now()) {
@@ -166,6 +168,10 @@ toast.success("Log in successfully")
       {children}
     </AuthContext.Provider>
   );
+};
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export const useAuth = () => {

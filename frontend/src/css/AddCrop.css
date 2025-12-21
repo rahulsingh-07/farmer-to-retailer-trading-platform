@@ -43,13 +43,13 @@
 }
 
 .add-crop-pills span {
-  background: #e0f2fe;
-  color: #0ea5e9;
+  background: #cbd5e1;
+  color: #0f172a;
   padding: 0.45rem 0.8rem;
   border-radius: 999px;
   font-weight: 600;
   font-size: 0.9rem;
-  border: 1px solid #bae6fd;
+  border: 1px solid #94a3b8;
 }
 
 .add-crop-summary {
@@ -235,8 +235,8 @@
 }
 
 .submit-btn {
-  background: linear-gradient(135deg, #0ea5e9, #14b8a6);
-  color: #ffffff;
+  background: linear-gradient(135deg, #0f172a, #0b3b59);
+  color: #f8fafc;
   border: none;
   border-radius: 12px;
   padding: 0.95rem 1.6rem;

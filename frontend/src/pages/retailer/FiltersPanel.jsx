@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 // FiltersPanel.jsx
 const FiltersPanel = ({ filters, setFilters }) => {
   const categories = ["Cereals", "Pulses", "Vegetables", "Fruits", "Oilseeds", "Spices"];
@@ -47,3 +48,13 @@ const FiltersPanel = ({ filters, setFilters }) => {
 };
 
 export default FiltersPanel;
+
+FiltersPanel.propTypes = {
+  filters: PropTypes.shape({
+    category: PropTypes.string,
+    location: PropTypes.string,
+    variety: PropTypes.string,
+    page: PropTypes.number,
+  }).isRequired,
+  setFilters: PropTypes.func.isRequired,
+};

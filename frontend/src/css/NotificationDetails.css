@@ -1,12 +1,34 @@
 .nd-container {
-  background: #f5f5f7;
+  background: #ffffff;
   align-items: stretch;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  gap: 20px;
+}
+
+/* Equal width/height for the two panels in Notification Details */
+.nd-container .detail-left,
+.nd-container .detail-right {
+  width: 50%;
+  flex: 1 1 0;
+  align-self: stretch;
+}
+
+.detail-left.nd-equal,
+.detail-right.nd-equal {
+  height: 100%;
 }
 
 .nd-container .detail-left {
   display: flex;
   flex-direction: column;
   height: 100%;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  padding: 14px 14px 18px;
 }
 
 .nd-container .main-img-wrapper {
@@ -20,6 +42,12 @@
 .nd-container .main-img {
   max-height: 420px;
   object-fit: contain;
+}
+
+.slider-wrapper {
+  height: 100%;
+  border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .nd-container .detail-actions {
@@ -67,75 +95,209 @@
 }
 
 /* Equalize panel feel for left/right */
-.detail-left.nd-equal{
-    background:#f5f5f7;
+.detail-left.nd-equal {
+  background: #fff;
 }
+
 .detail-right.nd-equal {
   background: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  padding: 18px 20px;
 }
 
-.nd-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+/* PROFESSIONAL PAYOUT & BALANCE SECTION */
+.payout-balance-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.payout-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.payout-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.payout-amount {
+  font-size: 28px;
+  font-weight: 800;
+  color: #059669;
+  line-height: 1.2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.payout-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(5, 150, 105, 0.1);
+  color: #059669;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  margin: 20px 0;
+}
+
+.balance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.balance-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.balance-label span:first-child {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.balance-date {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.balance-amount {
+  font-size: 32px;
+  font-weight: 900;
+  color: #0f766e;
+  line-height: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.balance-indicator {
+  font-size: 20px;
+  font-weight: 700;
+  animation: pulse 2s infinite;
+}
+
+.balance-indicator.positive {
+  color: #10b981;
+}
+
+.balance-indicator.negative {
+  color: #ef4444;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.payout-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-payout,
+.btn-statement {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
+  gap: 8px;
 }
 
-.nd-modal {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  width: 360px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+.btn-payout {
+  background: linear-gradient(135deg, #0f766e 0%, #047857 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
 }
 
-.nd-modal h3 {
-  margin: 0 0 8px 0;
-  color: #111827;
+.btn-payout:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 118, 110, 0.4);
 }
 
-.nd-modal p {
-  margin: 0 0 16px 0;
-  color: #4b5563;
-  font-size: 14px;
-}
-
-.nd-modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.nd-btn {
-  border: none;
-  border-radius: 10px;
-  padding: 10px 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
-}
-
-.nd-btn:disabled {
-  opacity: 0.6;
+.btn-payout:disabled {
+  background: #9ca3af;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.nd-btn:hover:not(:disabled) {
+.btn-statement {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-statement:hover {
+  background: #e2e8f0;
   transform: translateY(-1px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
-.nd-btn-primary {
-  background: #0f766e;
-  color: #fff;
+/* Responsive */
+@media (max-width: 768px) {
+  .nd-container {
+    flex-direction: column;
+    padding: 16px;
+  }
+  
+  .nd-container .detail-left,
+  .nd-container .detail-right {
+    width: 100%;
+  }
+  
+  .payout-balance-card {
+    padding: 20px 16px;
+  }
+  
+  .payout-amount {
+    font-size: 24px;
+  }
+  
+  .balance-amount {
+    font-size: 28px;
+  }
+  
+  .payout-actions {
+    flex-direction: column;
+  }
 }
 
-.nd-btn-secondary {
-  background: #111827;
-  color: #fff;
+/* Loading states */
+.detail-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  font-size: 18px;
+  color: #6b7280;
 }

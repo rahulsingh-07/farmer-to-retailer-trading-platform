@@ -15,13 +15,13 @@ const renderLanding = () =>
 
 describe("LandingPage", () => {
   beforeEach(() => {
-    originalFetch = global.fetch;
+    originalFetch = globalThis.fetch;
   });
 
   afterEach(() => {
     cleanup();
     vi.restoreAllMocks();
-    global.fetch = originalFetch;
+    globalThis.fetch = originalFetch;
   });
 
   it("renders hero content and CTA buttons", () => {
@@ -36,7 +36,7 @@ describe("LandingPage", () => {
 
   it("loads stats after scrolling and shows fetched totals", async () => {
     const mockResponse = { totalFarmer: 12, totalRetailer: 34 };
-    global.fetch = vi.fn(() =>
+    globalThis.fetch = vi.fn(() =>
       Promise.resolve({
         json: () => Promise.resolve(mockResponse),
       })
@@ -48,10 +48,10 @@ describe("LandingPage", () => {
     expect(zeroStats.length).toBeGreaterThanOrEqual(2);
 
     // Trigger scroll past threshold to reveal stats and kick off fetch
-    Object.defineProperty(window, "scrollY", { value: 400, writable: true });
-    fireEvent.scroll(window);
+    Object.defineProperty(globalThis, "scrollY", { value: 400, writable: true });
+    fireEvent.scroll(globalThis);
 
-    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalled());
     await waitFor(() => {
       expect(screen.getByText("12")).toBeInTheDocument();
       expect(screen.getByText("34")).toBeInTheDocument();

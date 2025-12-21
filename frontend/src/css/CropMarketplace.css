@@ -6,17 +6,24 @@
 }
 
 .filters-panel {
-  background: linear-gradient(135deg, #7aea66 0%, #0cd545 100%);
+  background: linear-gradient(135deg, #58c746 0%, #1f9b52 100%);
   padding: 1.5rem;
   border-radius: 12px;
   margin-bottom: 2rem;
-  color: white;
+  color: #0f172a;
+}
+
+.marketplace-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
 }
 
 .filter-group {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
-  flex-wrap: wrap;
+  align-items: center;
   margin-top: 1rem;
 }
 
@@ -27,10 +34,29 @@
   background: #ffffff;
   color: #0f172a;
   backdrop-filter: none;
+  width: 100%;
+  min-width: 0;
 }
 
 .filter-select option {
   color: #0f172a;
+}
+
+.clear-filters {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 2px solid #0f5132;
+  background: transparent;
+  color: #0f5132;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.clear-filters:hover {
+  background: #0f5132;
+  color: #f8fafc;
+  transform: translateY(-1px);
 }
 
 .crop-card {
@@ -63,8 +89,8 @@
   position: absolute;
   top: 12px;
   right: 12px;
-  background: #ff6b6b;
-  color: white;
+  background: #b91c1c;
+  color: #f8fafc;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-size: 0.8rem;
@@ -90,8 +116,8 @@
 .bid-btn {
   width: 100%;
   padding: 0.875rem;
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
+  background: linear-gradient(135deg, #0f5132, #065f46);
+  color: #f8fafc;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
@@ -132,4 +158,10 @@
 .confirm-bid-btn:disabled {
   background: #d1d5db;
   cursor: not-allowed;
+}
+
+@media (max-width: 1245px) {
+  .marketplace-grid {
+    grid-template-columns: 1fr;
+  }
 }

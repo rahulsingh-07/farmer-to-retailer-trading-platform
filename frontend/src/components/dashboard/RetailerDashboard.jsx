@@ -1,39 +1,95 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { retailerLinks } from "../Sidebar";
+import api from "../../utils/api";
 import "../../css/RetailerDashboard.css";
 
 const RetailerDashboard = () => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
+  const [supplierSignals, setSupplierSignals] = useState([]);
+  const [orderStats, setOrderStats] = useState({
+    total: 0,
+    needConfirmation: 0,
+    confirmed: 0,
+    shipped: 0,
+  });
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
 
-  const linkDescriptions = {
-    home: "Today’s overview and alerts.",
-    inventory: "Manage SKUs, batches, and stock.",
-    orders: "Track fulfillment and deliveries.",
-    pricing: "Adjust margins and purchase bids.",
-    analytics: "Sales, demand, and supplier mix.",
-    suppliers: "Browse and engage farmers.",
-    settings: "Store profile, payouts, and alerts.",
-  };
+  useEffect(() => {
+    const fetchSignals = async () => {
+      try {
+        const data = await api.get("/public/crops");
+        const raw = Array.isArray(data?.content) ? data.content : Array.isArray(data) ? data : [];
+        const byCategory = raw.reduce((acc, item) => {
+          const cat = item.category || "Other";
+          const price = Number(item.pricePerUnit || 0);
+          if (!acc[cat]) acc[cat] = { count: 0, totalPrice: 0 };
+          acc[cat].count += 1;
+          acc[cat].totalPrice += Number.isFinite(price) ? price : 0;
+          return acc;
+        }, {});
 
+        const signals = Object.entries(byCategory)
+          .map(([cat, stats]) => {
+            const avg = stats.count > 0 ? Math.round(stats.totalPrice / stats.count) : 0;
+            return {
+              id: cat.toLowerCase().replaceAll(/\s+/g, "-"),
+              name: cat,
+              change: `+${stats.count} lots`,
+              note: avg > 0 ? `Avg ₹${avg} per unit` : "No price data",
+            };
+          })
+          .sort((a, b) => Number.parseInt(b.change, 10) - Number.parseInt(a.change, 10))
+          .slice(0, 3);
+
+        setSupplierSignals(signals.length ? signals : []);
+      } catch (err) {
+        console.error("Failed to load supplier signals", err);
+        setSupplierSignals([]);
+      }
+    };
+
+    fetchSignals();
+  }, []);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const data = await api.get("/user/retailer/dashboard", token);
+        const confirmed = Number(data?.confirmed) || 0;
+        const shipped = Number(data?.shipped) || 0;
+        const needConfirmation = Number(data?.needConfirmation) || 0;
+        const notifications = Number(data?.notifications) || 0;
+
+        setOrderStats({
+          total: confirmed + shipped + needConfirmation,
+          needConfirmation,
+          confirmed,
+          shipped,
+        });
+
+        setUnreadNotifications(notifications);
+      } catch (err) {
+        console.error("Failed to load dashboard summary", err);
+      }
+    };
+
+    if (token) {
+      fetchDashboard();
+    }
+  }, [token]);
+
+  let renderedSignals = supplierSignals;
+  if (!supplierSignals.length) {
+    renderedSignals = [{ id: "fallback-1", name: "Loading", change: "+0", note: "Fetching live data" }];
+  }
+
+  const heroPills = renderedSignals.slice(0, 3).map((s) => s.name || "--");
   const highlightCards = [
-    { id: "activeSkus", label: "Active SKUs", value: "148", delta: "+6 this week", icon: "📦" },
-    { id: "pendingOrders", label: "Pending orders", value: "23", delta: "5 due today", icon: "🚚" },
-    { id: "avgMargin", label: "Avg. margin", value: "14.8%", delta: "+0.6% vs last week", icon: "💰" },
-    { id: "supplierFill", label: "Fill rate", value: "96%", delta: "Past 7 days", icon: "📈" },
-  ];
-
-  const tasks = [
-    { id: "restock", title: "Restock Wheat (Batch #44)", tag: "Inventory" },
-    { id: "confirm", title: "Confirm delivery window for PO-782", tag: "Orders" },
-    { id: "bid", title: "Update purchase bid for Maize", tag: "Pricing" },
-  ];
-
-  const supplierSignals = [
-    { id: "wheat", name: "Wheat", change: "+2.4%", note: "Higher quality lots available" },
-    { id: "rice", name: "Rice", change: "-0.8%", note: "Stable prices, ample stock" },
-    { id: "mustard", name: "Mustard", change: "+1.1%", note: "Rising demand in city stores" },
+    { id: "orders", label: "Total orders", value: orderStats.total, delta: `${orderStats.confirmed} confirmed`, icon: "📦" },
+    { id: "confirm", label: "Need confirmation", value: orderStats.needConfirmation, delta: `${orderStats.shipped} shipped`, icon: "⏳" },
+    { id: "notifications", label: "Unread alerts", value: unreadNotifications, delta: "Notifications", icon: "🔔" },
+    { id: "signals", label: "Top signals", value: renderedSignals.length, delta: "Supply watch", icon: "📈" },
   ];
 
   return (
@@ -59,12 +115,12 @@ const RetailerDashboard = () => {
 
         <div className="rd-hero-card">
           <div className="rd-hero-label">Today</div>
-          <div className="rd-hero-metric">23 orders</div>
-          <p className="rd-hero-note">5 need confirmation</p>
+          <div className="rd-hero-metric">{orderStats.total} orders</div>
+          <p className="rd-hero-note">{orderStats.needConfirmation} need confirmation</p>
           <div className="rd-hero-pills">
-            <span>Wheat</span>
-            <span>Rice</span>
-            <span>Maize</span>
+            {heroPills.map((pill, idx) => (
+              <span key={`${pill}-${idx}`}>{pill}</span>
+            ))}
           </div>
         </div>
       </header>
@@ -96,17 +152,29 @@ const RetailerDashboard = () => {
             </Link>
           </div>
 
-          <ul className="rd-list">
-            {tasks.map((task) => (
-              <li key={task.id} className="rd-list-item">
-                <div>
-                  <p className="rd-list-title">{task.title}</p>
-                  <span className="rd-tag">{task.tag}</span>
-                </div>
-                <span className="rd-list-arrow">→</span>
-              </li>
-            ))}
-          </ul>
+          <div
+            className="rd-list"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: "10px",
+              marginTop: "12px",
+            }}
+          >
+            <div
+              className="rd-list-item"
+              style={{
+                border: "1px dashed #e5e7eb",
+                borderRadius: "10px",
+                padding: "12px",
+                textAlign: "center",
+                color: "#6b7280",
+                background: "#f8fafc",
+              }}
+            >
+              No tasks right now
+            </div>
+          </div>
         </div>
 
         <div className="rd-panel">
@@ -121,7 +189,7 @@ const RetailerDashboard = () => {
           </div>
 
           <div className="rd-market-grid">
-            {supplierSignals.map((signal) => (
+            {renderedSignals.map((signal) => (
               <div key={signal.id} className="rd-market-card">
                 <div className="rd-market-top">
                   <span className="rd-market-name">{signal.name}</span>

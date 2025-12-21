@@ -1,0 +1,121 @@
+.mycropdetail-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.link-btn {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.link-btn:hover {
+  border-color: #0ea5e9;
+  color: #0ea5e9;
+  box-shadow: 0 12px 24px rgba(14, 165, 233, 0.18);
+}
+
+.panel {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
+  padding: 1rem 1.25rem;
+}
+
+.panel.error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.detail-grid,
+.auction-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.label {
+  margin: 0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  font-weight: 700;
+}
+
+.value {
+  margin: 0.1rem 0 0;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.description-block {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.bids-table {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.bids-head,
+.bids-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1.2fr;
+  gap: 0.4rem;
+}
+
+.bids-head {
+  font-weight: 800;
+  color: #0f172a;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.35rem;
+}
+
+.bids-row {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #f1f5f9;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bids-head,
+  .bids-row {
+    grid-template-columns: 1fr;
+  }
+}

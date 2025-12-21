@@ -12,7 +12,7 @@
   width: 36px;
   height: 36px;
   border-radius: 999px;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: linear-gradient(135deg, #0f5132, #065f46);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,7 +33,7 @@
 
 .brand-subtitle {
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: #0b1220;
 }
 
 /* Sidebar links */
@@ -47,7 +47,7 @@
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #6b7280;
+  color: #0f172a;
   margin: 1rem 0 0.4rem;
   padding: 0 0.75rem;
 }
@@ -59,7 +59,7 @@
   gap: 0.6rem;
   padding: 0.6rem 0.75rem;
   border-radius: 0.6rem;
-  color: #e5e7eb;
+  color: #0f172a;
   font-size: 0.9rem;
   text-decoration: none;
   border: none;
@@ -69,18 +69,18 @@
 }
 
 .sidebar-link:hover {
-  background: rgba(148, 163, 184, 0.15);
+  background: rgba(148, 163, 184, 0.35);
   transform: translateX(2px);
 }
 
 .sidebar-link.active {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: linear-gradient(135deg, #0f5132, #065f46);
   color: white;
 }
 
 .sidebar-logout {
   margin-top: 1.5rem;
-  color: #fecaca;
+  color: #b91c1c;
 }
 
 .sidebar-logout:hover {
@@ -126,7 +126,7 @@
   width: 36px;
   height: 36px;
   border-radius: 999px;
-  background: #22c55e;
+  background: #10833a;
   color: white;
   display: flex;
   align-items: center;
@@ -146,7 +146,7 @@
 
 .profile-role {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #111827;
 }
 
 /* ============= EXISTING DASHBOARD STYLES ============= */
@@ -174,6 +174,7 @@
   background: linear-gradient(135deg, #1f2937, #374151);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .admin-actions {
@@ -192,13 +193,13 @@
 }
 
 .refresh-btn {
-  background: rgba(16, 163, 74, 0.1);
-  color: #16a34a;
-  border: 2px solid #16a34a;
+  background: #d9f3e1;
+  color: #0b3b27;
+  border: 2px solid #0b3b27;
 }
 
 .refresh-btn:hover {
-  background: #16a34a;
+  background: #10833a;
   color: white;
 }
 
@@ -244,12 +245,12 @@
 .stat-value {
   font-size: 2.5rem;
   font-weight: 800;
-  color: #16a34a;
+  color: #065f46;
   margin-bottom: 0.5rem;
 }
 
 .stat-label {
-  color: #6b7280;
+  color: #111827;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -257,7 +258,6 @@
 }
 
 .main-content {
-  /* display: grid; */
   padding: 1rem 0 0 0;
   grid-template-columns: 2fr 1fr;
   gap: 2rem;
@@ -305,8 +305,8 @@
 }
 
 .create-admin-btn {
-  background: linear-gradient(45deg, #16a34a, #22c55e);
-  color: white;
+  background: linear-gradient(45deg, #0f172a, #0b4f6c);
+  color: #f8fafc;
   border: none;
   padding: 1rem;
   border-radius: 12px;
@@ -324,7 +324,7 @@
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
-  color: #6b7280;
+  color: #374151;
 }
 
 .empty-icon {
@@ -338,19 +338,19 @@
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  color: #6b7280;
+  color: #0b1220;
 }
 
 /* View details button */
 .view-btn {
-  background: rgba(59, 130, 246, 0.08);
-  color: #2563eb;
-  border: 2px solid #2563eb;
+  background: rgba(24, 76, 190, 0.2);
+  color: #c1d5f9;
+  border: 2px solid #0b2f6b;
 }
 
 .view-btn:hover:not(:disabled) {
-  background: #2563eb;
-  color: #ffffff;
+  background: #1d4ed8;
+  color: #f8fafc;
 }
 
 /* Modal overlay */
@@ -398,7 +398,7 @@
   background: transparent;
   font-size: 1.2rem;
   cursor: pointer;
-  color: #6b7280;
+  color: #0b1220;
 }
 
 /* Modal body */
@@ -419,7 +419,7 @@
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #9ca3af;
+  color: #4b5563;
 }
 
 .field-value {

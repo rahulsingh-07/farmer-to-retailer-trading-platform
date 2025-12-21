@@ -341,12 +341,12 @@ images.forEach((file) => formDataToSend.append("images", file));
             </div>
 
             <div className="form-group full-width">
-              <label>Images *</label>
+              <label htmlFor="add-image-input">Images *</label>
               <p className="image-hint">Add 1–5 clear photos of your lot.</p>
 
               <div className="image-grid">
                 {imagePreviews.map((src, index) => (
-                  <div key={index} className="image-tile">
+                  <div key={src} className="image-tile">
                     <img src={src} alt={`Crop ${index + 1}`} />
                     <button
                       type="button"
@@ -359,10 +359,11 @@ images.forEach((file) => formDataToSend.append("images", file));
                 ))}
 
                 {images.length < MAX_IMAGES && (
-                  <label className="image-tile add-tile">
+                  <label className="image-tile add-tile" htmlFor="add-image-input">
                     <span className="plus-icon">+</span>
                     <span className="add-text">Add image</span>
                     <input
+                      id="add-image-input"
                       type="file"
                       accept="image/*"
                       multiple

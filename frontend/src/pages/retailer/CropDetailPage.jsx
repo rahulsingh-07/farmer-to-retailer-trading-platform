@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../utils/api";
 import BidModal from "./BidModal";
 import "../../css/CropDetail.css";
-import { FaShoppingCart } from "react-icons/fa";
 import { BsGraphUpArrow } from "react-icons/bs";
 
 const CropDetailPage = ({ user: propUser, token: propToken }) => {
@@ -15,7 +15,7 @@ const CropDetailPage = ({ user: propUser, token: propToken }) => {
   const token = propToken || ctxToken;
 
   const [crop, setCrop] = useState(null);
-  const [activeImg, setActiveImg] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [showBidModal, setShowBidModal] = useState(false);
   const [bidAmount, setBidAmount] = useState("");
 
@@ -32,31 +32,48 @@ const CropDetailPage = ({ user: propUser, token: propToken }) => {
     return [];
   };
 
-  useEffect(() => {
-    const fetchCrop = async () => {
-      try {
-        const data = await api.get(`/public/crop/${id}`); // public detail endpoint
-        const imgs = normalizeImages(data);
-        setCrop({
-          ...data,
-          images: imgs,
-          status: data.status || data.auctionStatus,
-        });
-        if (imgs.length > 0) setActiveImg(imgs[0]);
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to load crop details");
+  const refreshCrop = useCallback(async () => {
+    try {
+      const data = await api.get(`/public/crop/${id}`); // public detail endpoint
+      const imgs = normalizeImages(data);
+      setCrop({
+        ...data,
+        images: imgs,
+        status: data.status || data.auctionStatus,
+      });
+      if (imgs.length > 0) {
+        setCurrentIndex(0);
       }
-    };
-
-    fetchCrop();
+      return data;
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load crop details");
+      throw err;
+    }
   }, [id]);
+
+  useEffect(() => {
+    refreshCrop();
+  }, [refreshCrop]);
 
   const handleBid = async () => {
     const amountNum = Number(bidAmount);
-    if (Number.isNaN(amountNum) || amountNum <= (crop.currentHighestBid || 0)) {
+
+    // Ensure we validate against the freshest numbers before sending
+    let latest;
+    try {
+      latest = await refreshCrop();
+    } catch (err) {
+      return; // already toasted
+    }
+
+    const latestHighest = Number(latest?.currentHighestBid || 0);
+    const base = Number(latest?.pricePerUnit || 0);
+    const minRequired = (latestHighest > 0 ? latestHighest : base) + 5;
+
+    if (Number.isNaN(amountNum) || amountNum < minRequired) {
       toast.error(
-        `Bid must be higher than current highest: ₹${crop.currentHighestBid ?? 0}`
+        `Bid must be at least ₹${minRequired.toLocaleString()} (current ₹${(latestHighest || base).toLocaleString()})`
       );
       return;
     }
@@ -71,19 +88,15 @@ const CropDetailPage = ({ user: propUser, token: propToken }) => {
     }
 
     try {
-      await api.post(
+      const response = await api.post(
         `/public/auctions/${crop.auctionId}/bid`,
         { amount: amountNum },
         token
       );
-      const successMsg = response?.message || "Crop added successfully";
+      const successMsg = response?.message || "Bid placed successfully";
       toast.success(successMsg);
       setShowBidModal(false);
-
-      // refresh crop info (e.g., updated highest bid)
-      const updated = await api.get(`/public/crop/${id}`);
-      const imgs = normalizeImages(updated);
-      setCrop({ ...updated, images: imgs, status: updated.status || updated.auctionStatus });
+      await refreshCrop();
     } catch (err) {
       console.log(user.role)
       console.error(err);
@@ -99,49 +112,90 @@ const CropDetailPage = ({ user: propUser, token: propToken }) => {
   const status = (crop.status || crop.auctionStatus || "").toString().toUpperCase();
   const role = (user?.role || "").toString().toUpperCase();
   const canBid = status === "ACTIVE" && role.includes("RETAILER") && !!token;
+
+  const handleNext = () => {
+    if (images.length === 0) return;
+    const nextIndex = (currentIndex + 1) % images.length;
+    setCurrentIndex(nextIndex);
+  };
+
+  const handlePrev = () => {
+    if (images.length === 0) return;
+    const prevIndex = (currentIndex - 1 + images.length) % images.length;
+    setCurrentIndex(prevIndex);
+  };
+
+  const handleDot = (idx) => {
+    setCurrentIndex(idx);
+  };
   return (
     <div className="detail-container">
       {/* LEFT: gallery & CTA buttons */}
       <div className="detail-left">
-        <div className="thumb-list">
+        <div className="slider-wrapper">
           {images.length > 0 ? (
-            images.map((url, idx) => (
+            <>
               <button
-                key={idx}
                 type="button"
-                className={`thumb-item ${
-                  activeImg === url ? "thumb-active" : ""
-                }`}
-                onClick={() => setActiveImg(url)}
+                className="slider-nav prev"
+                onClick={handlePrev}
+                aria-label="Previous image"
               >
-                <img src={url} alt={`${crop.cropName}-${idx}`} />
+                ‹
               </button>
-            ))
+              <div className="slider-viewport">
+                <div
+                  className="slider-track"
+                  style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                >
+                  {images.map((url, idx) => (
+                    <div className="slide" key={`${url}-${idx}`}>
+                      <img
+                        src={url}
+                        alt={`${crop.cropName}-${idx}`}
+                        className="main-img"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button
+                type="button"
+                className="slider-nav next"
+                onClick={handleNext}
+                aria-label="Next image"
+              >
+                ›
+              </button>
+              <div className="slider-dots">
+                {images.map((url, idx) => (
+                  <button
+                    key={`${url}-${idx}-dot`}
+                    type="button"
+                    className={`dot ${idx === currentIndex ? "dot-active" : ""}`}
+                    onClick={() => handleDot(idx)}
+                    aria-label={`Go to image ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </>
           ) : (
             <span className="thumb-placeholder">No images</span>
           )}
         </div>
 
-        <div className="main-img-wrapper">
-          <img
-            src={
-              activeImg ||
-              images[0] ||
-              "https://via.placeholder.com/600x600?text=No+Image"
-            }
-            alt={crop.cropName}
-            className="main-img"
-          />
-        </div>
-
         <div className="detail-actions">
-          <button className="detail-add-btn" type="button" disabled={!canBid} >
-            <FaShoppingCart /> Add to Watchlist
-          </button>
           <button
             className="detail-buy-btn"
             type="button"
-            onClick={() => setShowBidModal(true)}
+            onClick={async () => {
+              try {
+                await refreshCrop();
+              } catch (e) {
+                // already toasted
+              }
+              setShowBidModal(true);
+            }}
             disabled={!canBid}
           >
             <BsGraphUpArrow /> Place Bid
@@ -193,6 +247,12 @@ const CropDetailPage = ({ user: propUser, token: propToken }) => {
         <div className="detail-section">
           <h3>Crop details</h3>
           <table className="detail-table">
+            <thead>
+              <tr>
+                <th scope="col">Field</th>
+                <th scope="col">Value</th>
+              </tr>
+            </thead>
             <tbody>
               <tr>
                 <td>Category</td>
@@ -242,3 +302,15 @@ const CropDetailPage = ({ user: propUser, token: propToken }) => {
 };
 
 export default CropDetailPage;
+
+CropDetailPage.propTypes = {
+  user: PropTypes.shape({
+    role: PropTypes.string,
+  }),
+  token: PropTypes.string,
+};
+
+CropDetailPage.defaultProps = {
+  user: null,
+  token: undefined,
+};

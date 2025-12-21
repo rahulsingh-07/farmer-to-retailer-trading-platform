@@ -21,7 +21,7 @@ const PendingUsersTable = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      
+
       const response = await fetch(
         `http://localhost:8081/admin/pendingUsers?page=${page}&size=${size}`,
         {
@@ -74,7 +74,7 @@ const PendingUsersTable = () => {
       setUpdating((prev) => ({ ...prev, [userId]: true }));
       const token = localStorage.getItem("token");
       
-      const response = await fetch(
+      await fetch(
         `http://localhost:8081/admin/user/${userId}/status?status=${status}`,
         {
           method: "PATCH",
@@ -110,6 +110,73 @@ const PendingUsersTable = () => {
     setSelectedUser(null);
   };
 
+  const handleOverlayKeyDown = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      closeModal();
+    }
+  };
+
+  let tableContent;
+  if (loading) {
+    tableContent = <div className="loading-state">Loading users...</div>;
+  } else if (pendingUsers.length === 0) {
+    tableContent = (
+      <div className="empty-state">
+        <div className="empty-icon">🌾</div>
+        <h3>No pending registrations</h3>
+        <p>All Users are approved!</p>
+      </div>
+    );
+  } else {
+    tableContent = (
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {pendingUsers.map((user) => (
+            <tr key={user.userId}>
+              <td className="farmer-name">{user.fullName}</td>
+              <td>{user.email}</td>
+              <td>{user.phoneNumber}</td>
+              <td>{user.status}</td>
+              <td className="actions-cell">
+                <button
+                  className="action-btn view-btn"
+                  onClick={() => handleViewUser(user)}
+                  disabled={!!updating[user.userId]}
+                >
+                  👁 View
+                </button>
+                <button
+                  className="action-btn approve-btn"
+                  onClick={() => handleUpdateStatus(user.userId, "ACTIVE")}
+                  disabled={!!updating[user.userId]}
+                >
+                  {updating[user.userId] ? "⏳" : "✅ Approve"}
+                </button>
+                <button
+                  className="action-btn reject-btn"
+                  onClick={() => handleUpdateStatus(user.userId, "INACTIVE")}
+                  disabled={!!updating[user.userId]}
+                >
+                  {updating[user.userId] ? "⏳" : "❌ Reject"}
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+
   return (
     <>
       <div className="pending-card">
@@ -122,10 +189,10 @@ const PendingUsersTable = () => {
 
             <div className="table-actions">
               <label className="page-size">
-                Page size
+                <span className="page-size-label">Page size</span>
                 <select
                   value={pagination.size}
-                  onChange={(e) => handleSizeChange(parseInt(e.target.value, 10))}
+                  onChange={(e) => handleSizeChange(Number.parseInt(e.target.value, 10))}
                   disabled={loading}
                 >
                   <option value={5}>5</option>
@@ -147,7 +214,7 @@ const PendingUsersTable = () => {
 
           <div className="table-meta">
             <span>{pagination.totalElements} total</span>
-            <span>
+            <span className="table-page-meta">
               Page {pagination.currentPage + 1} of {Math.max(pagination.totalPages, 1)}
             </span>
           </div>
@@ -185,67 +252,21 @@ const PendingUsersTable = () => {
         </div>
 
         <div className="table-container">
-          {loading ? (
-            <div className="loading-state">Loading users...</div>
-          ) : pendingUsers.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">🌾</div>
-              <h3>No pending registrations</h3>
-              <p>All Users are approved!</p>
-            </div>
-          ) : (
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pendingUsers.map((user) => (
-                  <tr key={user.userId}>
-                    <td className="farmer-name">{user.fullName}</td>
-                    <td>{user.email}</td>
-                    <td>{user.phoneNumber}</td>
-                    <td>{user.status}</td>
-                    <td className="actions-cell">
-                      <button
-                        className="action-btn view-btn"
-                        onClick={() => handleViewUser(user)}
-                        disabled={!!updating[user.userId]}
-                      >
-                        👁 View
-                      </button>
-                      <button
-                        className="action-btn approve-btn"
-                        onClick={() => handleUpdateStatus(user.userId, "ACTIVE")}
-                        disabled={!!updating[user.userId]}
-                      >
-                        {updating[user.userId] ? "⏳" : "✅ Approve"}
-                      </button>
-                      <button
-                        className="action-btn reject-btn"
-                        onClick={() => handleUpdateStatus(user.userId, "INACTIVE")}
-                        disabled={!!updating[user.userId]}
-                      >
-                        {updating[user.userId] ? "⏳" : "❌ Reject"}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          {tableContent}
         </div>
       </div>
 
       {/* Modal - Independent */}
       {isViewOpen && selectedUser && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay-wrapper">
+          <button
+            type="button"
+            className="modal-overlay"
+            aria-label="Close dialog"
+            onClick={closeModal}
+            onKeyDown={handleOverlayKeyDown}
+          />
+          <div className="modal-card">
             <div className="modal-header">
               <h3>User Details</h3>
               <button className="modal-close" onClick={closeModal}>✕</button>

@@ -1,13 +1,26 @@
 const API_BASE_URL = "http://localhost:8081"; // make sure this is defined
 
-// Helper to handle response
+// Helper to handle response with tolerant parsing (handles empty or non-JSON bodies)
 const checkResponse = async (response) => {
+  const raw = await response.text();
+  let parsed;
+
+  if (raw) {
+    try {
+      parsed = JSON.parse(raw);
+    } catch (e) {
+      // Not valid JSON; keep the raw text
+      parsed = raw;
+    }
+  }
+
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    const errorMessage = errorData.message || response.statusText || 'API Error';
+    const errorMessage = (parsed && parsed.message) || response.statusText || 'API Error';
     throw new Error(errorMessage);
   }
-  return response.json();
+
+  // If JSON parsed to object/array, return it; otherwise return raw text
+  return typeof parsed === 'undefined' ? {} : parsed;
 };
 
 const api = {

@@ -21,6 +21,13 @@ import CropMarketplace from './pages/retailer/CropMarketplace'
 import CropDetailPage from './pages/retailer/CropDetailPage'
 import Notifications from './pages/farmer/Notifications'
 import NotificationDetails from './pages/farmer/NotificationDetails'
+import NotificationsRetailer from './pages/retailer/Notifications'
+import NotificationDetailsRetailer from './pages/retailer/NotificationDetails'
+import MyCropDetails from './pages/farmer/MyCropDetails'
+import FarmerOrders from './pages/farmer/Orders'
+import RetailerOrders from './pages/retailer/Orders'
+import OrderDetailsFarmer from './pages/farmer/OrderDetails'
+import OrderDetailsRetailer from './pages/retailer/OrderDetails'
 const App = () => {
 
   return (
@@ -63,6 +70,17 @@ const App = () => {
               <Sidebar />
               <main className="app-content">
                 <MyCrop />
+              </main>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/farmer/orders"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <main className="app-content">
+                <FarmerOrders />
               </main>
             </PrivateRoute>
           }
@@ -129,7 +147,18 @@ const App = () => {
             <PrivateRoute>
               <Sidebar />
               <main className="app-content">
-                <Notifications />
+                <NotificationsRetailer />
+              </main>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/retailer/orders"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <main className="app-content">
+                <RetailerOrders />
               </main>
             </PrivateRoute>
           }
@@ -140,11 +169,56 @@ const App = () => {
             <PrivateRoute>
               <Sidebar />
               <main className="app-content">
-                <NotificationDetails />
+                <NotificationDetailsRetailer />
               </main>
             </PrivateRoute>
           }
         />
+        <Route
+          path="/admin/addAdmin"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <main className="app-content">
+                <AddAdmin />
+              </main>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/farmer/crops/:id"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <main className="app-content">
+                <MyCropDetails />
+              </main>
+            </PrivateRoute>
+          }
+        />
+         <Route
+          path="/farmer/order/:id"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <main className="app-content">
+                <OrderDetailsFarmer />
+              </main>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/retailer/order/:id"
+          element={
+            <PrivateRoute>
+              <Sidebar />
+              <main className="app-content">
+                <OrderDetailsRetailer />
+              </main>
+            </PrivateRoute>
+          }
+        />
+        
       </Routes>
       <ToastContainer theme="colored" position="top-right" autoClose={3000} />
       {/* <Footer /> */}

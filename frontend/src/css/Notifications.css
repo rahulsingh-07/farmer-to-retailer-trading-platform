@@ -26,6 +26,8 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(226, 232, 240, 0.9);
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  position: relative;
+  z-index: 5;
 }
 
 .notif-title {
@@ -44,6 +46,7 @@
 .notif-dropdowns,
 .dropdown {
   position: relative;
+  z-index: 50;
 }
 
 .dropdown-btn {
@@ -100,7 +103,7 @@
   border-radius: 12px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.22);
-  z-index: 20;
+  z-index: 200;
   min-width: 170px;
   padding: 6px;
   animation: dropdown-fade-in 140ms ease-out;
@@ -162,11 +165,13 @@
 
 .notif-card.unread {
   border-color: rgba(56, 189, 248, 0.9);
-  background: radial-gradient(circle at top left, #eff6ff 0, #ffffff 55%);
+  background: radial-gradient(circle at top left, #c3d6ef 0, #ffffff 55%);
 }
 
 .notif-card.read {
-  opacity: 0.9;
+  opacity: 0.7;
+  background: #ecf1f7;
+  border-color: rgba(226, 232, 240, 0.9);
 }
 
 .notif-card:hover {

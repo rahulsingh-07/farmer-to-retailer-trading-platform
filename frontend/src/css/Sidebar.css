@@ -51,7 +51,6 @@
   justify-content: center;
   font-weight: 800;
   font-size: 1.1rem;
-  color: white;
 }
 
 .logo-text {
@@ -83,7 +82,7 @@
 }
 
 .menu-item:hover {
-  background: rgba(148, 163, 184, 0.15);
+  background: rgba(15, 78, 13, 0.803);
   transform: translateX(4px);
   color: #f8fafc;
 }

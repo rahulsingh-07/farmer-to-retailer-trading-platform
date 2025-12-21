@@ -103,10 +103,11 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="login-form">
             <div className="form-group">
-              <label className="form-label">
+              <label className="form-label" htmlFor="login-username">
                 Username <span className="required">*</span>
               </label>
               <input
+                id="login-username"
                 type="text"
                 value={username}
                 onChange={(e) => {
@@ -121,10 +122,11 @@ const Login = () => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">
+              <label className="form-label" htmlFor="login-password">
                 Password <span className="required">*</span>
               </label>
               <input
+                id="login-password"
                 type="password"
                 value={password}
                 onChange={(e) => {
@@ -145,8 +147,8 @@ const Login = () => {
             >
               {submitting ? (
                 <>
-                  <span className="spinner"></span>
-                  Signing In...
+                  <span className="spinner" aria-hidden="true"></span>
+                  <span className="spinner-text">Signing In...</span>
                 </>
               ) : (
                 "Sign In"
@@ -161,13 +163,10 @@ const Login = () => {
                 Register as Farmer
               </Link>
             </p>
-            <Link to="/registerRetailer" className=" secondary-cta">
-              Register as Retailer
-            </Link>
-            
-            <Link to="/forgot-password" className="secondary-cta ">
-              Forgot password?
-            </Link>
+            <div className="secondary-cta-group">
+              <Link to="/registerRetailer" className="secondary-cta">Register as Retailer</Link>
+              <Link to="/forgot-password" className="secondary-cta">Forgot password?</Link>
+            </div>
           </div>
         </div>
       </div>
