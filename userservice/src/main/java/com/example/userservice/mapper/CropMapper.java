@@ -40,7 +40,7 @@ public class CropMapper {
         Auction auction = new Auction();
         auction.setCrop(crops);
         auction.setStartTime(LocalDateTime.now());
-        auction.setEndTime(LocalDateTime.now().plusMinutes(5)); // example
+        auction.setEndTime(LocalDateTime.now().plusDays(7)); // example
         auction.setStatus(AuctionStatus.ACTIVE);
         auction.setCurrentHighestBid(BigDecimal.ZERO);
 

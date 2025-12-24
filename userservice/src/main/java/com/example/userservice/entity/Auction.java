@@ -21,9 +21,9 @@ public class Auction {
     @GeneratedValue
     private UUID id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "crop_id", nullable = false)
-    private Crops crop;  // ✅ Owns the relationship
+    private Crops crop;  //Owns the relationship
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;

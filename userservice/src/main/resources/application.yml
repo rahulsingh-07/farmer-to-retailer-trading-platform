@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/ftrt_userdata
-    username: postgres
-    password: root
+    username: ${db_username}
+    password: ${db_password}
     driver-class-name: org.postgresql.Driver
 
   jpa:

@@ -21,12 +21,12 @@ public class CropResponse {
     private String unit;
     private String location;
     private String description;
-    private BigDecimal pricePerUnit;        // Base price
+    private BigDecimal pricePerUnit;
     private LocalDate harvestDate;
-    private List<CropImageResponse> imageUrl;                // First image
+    private List<CropImageResponse> imageUrl;
     private String farmerName;
 
-    private BigDecimal currentHighestBid;   // Auction highest bid
+    private BigDecimal currentHighestBid;
     private UUID auctionId;
     private Long daysLeft;
     private String auctionStatus;

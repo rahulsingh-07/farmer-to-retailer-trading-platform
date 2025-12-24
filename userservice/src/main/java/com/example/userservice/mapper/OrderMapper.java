@@ -5,7 +5,6 @@ import com.example.userservice.dto.OrderFarmerResponse;
 import com.example.userservice.dto.OrderResponse;
 import com.example.userservice.dto.OrderRetailerResponse;
 import com.example.userservice.entity.Order;
-import com.example.userservice.enums.OrderStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

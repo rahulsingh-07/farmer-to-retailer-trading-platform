@@ -5,7 +5,6 @@ import com.cloudinary.utils.ObjectUtils;
 import com.example.userservice.dto.*;
 import com.example.userservice.entity.*;
 import com.example.userservice.enums.OrderStatus;
-import com.example.userservice.enums.UserRole;
 import com.example.userservice.exception.CropNotFoundException;
 import com.example.userservice.exception.ImageUploadException;
 import com.example.userservice.mapper.CropMapper;
@@ -13,7 +12,6 @@ import com.example.userservice.mapper.FarmerCropMapper;
 import com.example.userservice.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

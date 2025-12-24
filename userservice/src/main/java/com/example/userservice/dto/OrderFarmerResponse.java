@@ -1,6 +1,5 @@
 package com.example.userservice.dto;
 
-import com.example.userservice.entity.Crops;
 import com.example.userservice.enums.OrderStatus;
 import lombok.Builder;
 import lombok.Data;
