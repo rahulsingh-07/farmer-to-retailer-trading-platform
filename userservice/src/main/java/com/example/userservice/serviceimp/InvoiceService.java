@@ -2,17 +2,18 @@ package com.example.userservice.serviceimp;
 
 import com.example.userservice.entity.Order;
 import com.example.userservice.repository.OrderRepository;
+import com.lowagie.text.*;
+import com.lowagie.text.Font;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.openpdf.text.*;
-import org.openpdf.text.Font;
-import org.openpdf.text.Rectangle;
-import org.openpdf.text.pdf.PdfPCell;
-import org.openpdf.text.pdf.PdfPTable;
-import org.openpdf.text.pdf.PdfWriter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
@@ -101,9 +102,9 @@ public class InvoiceService {
             footer.addCell(createBoldCell("Subtotal:"));
             footer.addCell(createCell("₹" + rate.multiply(qty)));
             footer.addCell(createBoldCell("CGST (2.5%):"));
-            footer.addCell(createCell("₹" + tax.divide(BigDecimal.valueOf(2))));
+            footer.addCell(createCell("₹" + tax.divide(BigDecimal.valueOf(2), 2, RoundingMode.HALF_UP)));
             footer.addCell(createBoldCell("SGST (2.5%):"));
-            footer.addCell(createCell("₹" + tax.divide(BigDecimal.valueOf(2))));
+            footer.addCell(createCell("₹" + tax.divide(BigDecimal.valueOf(2), 2, RoundingMode.HALF_UP)));
             footer.addCell(createBoldCell("TOTAL:", Color.GREEN, 12));
             PdfPCell totalCell = createCell("₹" + total);
             totalCell.setBackgroundColor(new Color(230, 255, 230));
