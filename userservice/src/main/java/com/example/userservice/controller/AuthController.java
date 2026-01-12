@@ -24,7 +24,6 @@ public class AuthController {
     private final UserServiceImp userServiceImp;
     private final AuthServiceImp authServiceImp;
     private final TokenServiceImp tokenServiceImp;
-    private static final String MSG = "message";
 
     //login
     @PostMapping("/login")
