@@ -1,0 +1,252 @@
+/* Workflow.css - aligned with your current landing page */
+
+/* Wrapper */
+.workflow-wrapper {
+  overflow-x: hidden;
+  position: relative;
+  color: #f8fafc;
+}
+
+/* Sections share the same background from the CTA band */
+.workflow-section {
+  padding: 5rem 0 6rem;
+  position: relative;
+  background: transparent;
+}
+
+.farmer-section,
+.retailer-section {
+  background: transparent;
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 1.75rem;
+}
+
+/* Headers - match "Trade fresh, faster, together" style */
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  font-size: clamp(2.3rem, 4vw, 3.2rem);
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+}
+
+.section-subtitle {
+  font-size: 1.05rem;
+  color: #e5e7eb;
+  max-width: 520px;
+  margin: 0.5rem auto 0;
+  line-height: 1.6;
+}
+
+/* Layout: thin timeline + compact cards */
+.workflow-grid {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+/* Timeline - subtle, not loud */
+.timeline {
+  position: sticky;
+  top: 96px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-top: 0.5rem;
+}
+
+.timeline-item {
+  position: relative;
+  height: 68px;
+  display: flex;
+  align-items: center;
+}
+
+.timeline-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #84cc16;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  bottom: -3.5rem;
+  width: 2px;
+  background: linear-gradient(to bottom, rgba(226, 232, 240, 0.7), rgba(226, 232, 240, 0.2));
+  opacity: 0.7;
+}
+
+.timeline-item:last-child .timeline-line {
+  display: none;
+}
+
+/* Step cards - compact, glassy like your "Fast Setup / Animated UI / Responsive" cards */
+.steps-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.step-card {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  position: relative;
+  overflow: hidden;
+  height: 70px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  backdrop-filter: blur(3px);
+}
+
+.step-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--step-color);
+}
+
+.step-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.36);
+}
+
+/* Icon block - small pill like the icons in your feature strip */
+.step-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  margin-right: 0.9rem;
+  flex-shrink: 0;
+  background: #22c55e;
+  color: #0b1728;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.42);
+}
+
+/* Text inside card */
+.step-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-content h3 {
+  font-size: 0.98rem;
+  margin: 0 0 0.15rem 0;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.step-content p {
+  margin: 0;
+  font-size: 0.86rem;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Step number – subtle */
+.step-number {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #d1fae5;
+  min-width: 32px;
+  text-align: right;
+}
+
+/* CTA buttons – match your red “Start Sourcing Fresh Produce” button */
+.cta-section {
+  text-align: center;
+  margin-top: 3.5rem;
+}
+
+.cta-primary-large,
+.cta-secondary-large {
+  padding: 0.95rem 2.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta-primary-large {
+  background: #f43f5e;
+  color: #fefce8;
+  box-shadow: 0 12px 30px rgba(248, 113, 113, 0.5);
+}
+
+.cta-secondary-large {
+  background: #0f766e;
+  color: #ecfdf5;
+  box-shadow: 0 10px 24px rgba(15, 118, 110, 0.45);
+}
+
+.cta-primary-large:hover,
+.cta-secondary-large:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.35);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .workflow-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .workflow-section {
+    padding: 3.25rem 0 3.75rem;
+  }
+
+  .step-card {
+    height: auto;
+    padding: 1.1rem 1.25rem;
+  }
+
+  .step-icon {
+    width: 42px;
+    height: 42px;
+    margin-right: 0.9rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+}

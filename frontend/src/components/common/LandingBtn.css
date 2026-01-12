@@ -1,0 +1,74 @@
+/* Styles extracted from the original Tailwind utilities used in LandingBtn */
+
+.landing-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* matches Tailwind gap-2 */
+  margin: 0 auto;
+  padding: 0.5rem 1rem; /* py-2 px-4 */
+  font-size: 1.125rem; /* text-lg */
+  line-height: 1.75rem;
+  font-weight: 600; /* lg:font-semibold approximated at all breakpoints */
+  color: #1f2937;
+  background-color: #f9fafb; /* bg-gray-50 */
+  border: 2px solid #f9fafb; /* border-2 + border-gray-50 */
+  border-radius: 9999px; /* rounded-full */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-xl */
+  backdrop-filter: blur(12px); /* backdrop-blur-md */
+  isolation: isolate;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+  transition: color 250ms ease;
+}
+
+.landing-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -100%;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* before:aspect-square */
+  border-radius: 9999px;
+  background-color: #013020; /* emerald-500 */
+  z-index: -10;
+  transform: translate(0, -50%) scale(1);
+  transition: all 500ms ease;
+}
+
+.landing-btn:hover {
+  color: #f9fafb; /* hover:text-gray-50 */
+}
+
+.landing-btn:hover::before {
+  left: 0;
+  transform: translate(0, -50%) scale(1.5);
+}
+
+.landing-btn__icon {
+  width: 2rem; /* w-8 */
+  height: 2rem; /* h-8 */
+  padding: 0.5rem; /* p-2 */
+  border-radius: 9999px; /* rounded-full */
+  border: 1px solid #374151; /* border-gray-700 */
+  background: transparent;
+  color: #f9fafb; /* text-gray-50 */
+  transform: rotate(45deg);
+  transition: transform 100ms linear, background-color 300ms linear, border-color 300ms linear;
+}
+
+.landing-btn__icon-path {
+  fill: #1f2937; /* fill-gray-800 */
+  transition: fill 300ms linear;
+}
+
+.landing-btn:hover .landing-btn__icon {
+  background-color: #f9fafb; /* group-hover:bg-gray-50 */
+  border-color: transparent; /* group-hover:border-none */
+  transform: rotate(90deg); /* group-hover:rotate-90 */
+}
+
+.landing-btn:hover .landing-btn__icon-path {
+  fill: #1f2937; /* group-hover:fill-gray-800 */
+}

@@ -1,0 +1,23 @@
+.crop-grid {
+  display: grid;
+  gap: 16px;
+  padding: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.nav-bar {
+  height: 60px;
+  position: sticky;
+  top: 0;
+	left: 0;
+	right: 0;
+	z-index: 50;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 2rem;
+	background: transparent;
+  background-color: rgba(21, 21, 21, 0.247);
+  box-shadow: 10px 10px 20px rgba(200, 198, 198, 0.225);
+  margin-bottom: 16px;
+  border-radius: 10px;
+}

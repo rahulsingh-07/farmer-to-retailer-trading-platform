@@ -1,0 +1,177 @@
+/* ================= ROOT ================= */
+.farmer-dashboard {
+  padding: 24px;
+  background: #f8fafc;
+  min-height: 100vh;
+  color: #0f172a;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont;
+}
+
+/* ================= HERO ================= */
+.fd-hero {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.fd-hero-copy {
+  background: linear-gradient(135deg, #0f766e, #16a34a);
+  border-radius: 16px;
+  padding: 28px;
+  color: white;
+}
+
+.fd-kicker {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.fd-hero-copy h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 10px 0;
+}
+
+.fd-subtitle {
+  font-size: 15px;
+  opacity: 0.95;
+  margin-bottom: 18px;
+}
+
+.fd-cta-row {
+  display: flex;
+  gap: 12px;
+}
+
+.fd-btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.fd-btn.primary {
+  background: white;
+  color: #065f46;
+}
+
+.fd-btn.primary:hover {
+  background: #ecfdf5;
+}
+
+.fd-btn.ghost {
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: white;
+}
+
+.fd-btn.ghost:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ================= HERO CARD ================= */
+.fd-hero-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fd-hero-label {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.fd-hero-metric {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f2a14;
+}
+
+.fd-hero-note {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #475569;
+}
+
+/* ================= WORKFLOW CARDS ================= */
+.fd-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.fd-card {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fd-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+.fd-card-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #16a34a;
+}
+
+.fd-card-label {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #475569;
+}
+
+/* ================= DASHBOARD CHARTS ================= */
+.dashboard-container {
+  margin-top: 12px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.07);
+}
+
+.dashboard-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #0f172a;
+}
+
+/* ================= LOADING ================= */
+.dashboard-loading {
+  padding: 60px;
+  text-align: center;
+  font-size: 16px;
+  color: #64748b;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 900px) {
+  .fd-hero {
+    grid-template-columns: 1fr;
+  }
+}

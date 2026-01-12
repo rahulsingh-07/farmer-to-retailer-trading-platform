@@ -1,0 +1,388 @@
+/* Retailer dashboard styling */
+
+.retailer-dashboard {
+  width: 100%;
+  min-height: 100vh;
+  background: radial-gradient(circle at 12% 20%, #f0f9ff 0, #f8fafc 45%, #eef2ff 100%);
+  color: #0f172a;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+}
+
+.rd-hero {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 28px;
+  align-items: center;
+  margin: 0 auto 32px;
+  max-width: 1200px;
+}
+
+.rd-hero-copy h1 {
+  font-size: clamp(2.1rem, 3vw, 2.75rem);
+  margin: 4px 0 8px;
+  font-weight: 800;
+}
+
+.rd-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  color: #0ea5e9;
+  font-weight: 700;
+  margin: 0;
+}
+
+.rd-subtitle {
+  margin: 0 0 18px;
+  color: #475569;
+  max-width: 540px;
+  line-height: 1.5;
+}
+
+.rd-cta-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.rd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.rd-btn.primary {
+  background: linear-gradient(120deg, #0ea5e9, #6366f1);
+  color: #f8fafc;
+  box-shadow: 0 12px 24px rgba(14, 165, 233, 0.2);
+}
+
+.rd-btn.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(99, 102, 241, 0.22);
+}
+
+.rd-btn.ghost {
+  color: #0f172a;
+  border-color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.rd-btn.ghost:hover {
+  background: #e2e8f0;
+}
+
+.rd-hero-card {
+  background: #0f172a;
+  color: #f8fafc;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+  display: grid;
+  gap: 12px;
+}
+
+.rd-hero-label {
+  font-size: 0.85rem;
+  color: #a5b4fc;
+  letter-spacing: 0.04em;
+}
+
+.rd-hero-metric {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.rd-hero-note {
+  margin: 0;
+  color: #cbd5e1;
+}
+
+.rd-hero-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rd-hero-pills span {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+.rd-stats-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  max-width: 1200px;
+  margin: 0 auto 28px;
+}
+
+.rd-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+  border: 1px solid #e2e8f0;
+  display: grid;
+  gap: 8px;
+}
+
+.rd-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rd-card-icon {
+  font-size: 1.4rem;
+}
+
+.rd-card-delta {
+  font-size: 0.85rem;
+  color: #0ea5e9;
+  font-weight: 700;
+}
+
+.rd-card-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.rd-card-label {
+  color: #475569;
+  font-weight: 600;
+}
+
+.rd-section {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+  max-width: 1200px;
+  margin: 0 auto 20px;
+}
+
+.rd-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.rd-section-header h2 {
+  margin: 4px 0 0;
+  font-size: 1.4rem;
+}
+
+.rd-section-hint {
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.rd-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.rd-link-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.rd-link-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+  border-color: #cbd5e1;
+}
+
+.rd-link-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: #e0f2fe;
+  font-size: 1.2rem;
+}
+
+.rd-link-copy h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.rd-link-copy p {
+  margin: 2px 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.rd-link-arrow {
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.rd-two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.rd-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px;
+  background: #f8fafc;
+}
+
+.rd-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.rd-panel-header h3 {
+  margin: 4px 0 0;
+}
+
+.rd-link-inline {
+  color: #0ea5e9;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.rd-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.rd-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 12px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.rd-list-title {
+  margin: 0 0 6px;
+  font-weight: 700;
+}
+
+.rd-tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0ea5e9;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.rd-list-arrow {
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.rd-market-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.rd-market-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 12px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+}
+
+.rd-market-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.rd-market-name {
+  font-weight: 700;
+}
+
+.rd-market-change {
+  font-weight: 800;
+}
+
+.rd-market-change.up {
+  color: #0ea5e9;
+}
+
+.rd-market-change.down {
+  color: #dc2626;
+}
+
+.rd-market-note {
+  margin: 0;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  .rd-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .retailer-dashboard {
+    padding: 32px 16px 48px;
+  }
+}
+/* CHART CONTAINERS */
+.rd-chart {
+  width: 100%;
+  height: 260px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+/* Recharts text consistency */
+.recharts-text {
+  font-size: 0.85rem;
+  fill: #334155;
+}
+
+.recharts-legend-item-text {
+  color: #334155 !important;
+  font-weight: 600;
+}

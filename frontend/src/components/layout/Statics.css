@@ -1,0 +1,59 @@
+.stats-section {
+  display: flex;
+  gap: 3rem;
+  padding: 4rem 6%;
+  background: #f8fafc7f;
+  align-items: center;
+}
+
+/* LEFT TEXT */
+.stats-copy {
+  flex: 1;
+}
+
+.stats-copy h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: wheat;
+  margin-bottom: 1rem;
+}
+
+.stats-copy p {
+  font-size: 1.5rem;
+  line-height: 1.7;
+  color: #f0f1f4;
+  margin-bottom: 1rem;
+}
+
+/* RIGHT CHART */
+.stats-chart {
+  flex: 1;
+  min-height: 320px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* TOOLTIP OVERRIDE */
+.recharts-tooltip-wrapper {
+  font-size: 0.9rem;
+}
+
+/* LEGEND */
+.recharts-legend-item-text {
+  color: #334155 !important;
+  font-weight: 500;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .stats-section {
+    flex-direction: column;
+    padding: 3rem 1.5rem;
+  }
+
+  .stats-copy h1 {
+    font-size: 2rem;
+  }
+}

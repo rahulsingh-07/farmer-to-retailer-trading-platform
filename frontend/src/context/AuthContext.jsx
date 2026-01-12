@@ -1,180 +1,112 @@
-import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
-import PropTypes from 'prop-types';
-import api from '../utils/api';
-import { toast } from 'react-toastify';
+import { createContext, useContext, useEffect, useState, useMemo, useRef } from "react";
+import PropTypes from "prop-types";
+import jwtDecode from "jwt-decode";
+import { toast } from "react-toastify";
+import { login as loginApi } from "../services/authService";
 
-const AuthContext = createContext();
-
-function parseJwt(token) {
-  if (!token) return null;
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replaceAll('-', '+').replaceAll('_', '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map((c) => '%' + ('00' + c.codePointAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  } catch (e) {
-    console.error('Failed to parse JWT', e);
-    return null;
-  }
-}
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // {username, roles:[]}
-  const [token, setToken] = useState(null);
-const [loading, setLoading] = useState(true);
-  const logoutTimerRef = useRef(null);
+    const [user, setUser] = useState(null);
+    const [token, setToken] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const logoutTimerRef = useRef(null);
 
-  const clearLogoutTimer = () => {
-    if (logoutTimerRef.current) {
-      clearTimeout(logoutTimerRef.current);
-      logoutTimerRef.current = null;
-    }
-  };
+    const clearLogoutTimer = () => {
+        if (logoutTimerRef.current) {
+            clearTimeout(logoutTimerRef.current);
+            logoutTimerRef.current = null;
+        }
+    };
 
-  const setLogoutTimer = (token) => {
-    clearLogoutTimer();
-    const payload = parseJwt(token);
-    if (payload?.exp) {
-      const expiryTimeMs = payload.exp * 1000;
-      const currentTimeMs = Date.now();
-      const timeLeft = expiryTimeMs - currentTimeMs;
+    const scheduleLogout = (jwt) => {
+        clearLogoutTimer();
+        const { exp } = jwtDecode(jwt);
+        if (!exp) return;
 
-      if (timeLeft <= 0) {
-        logout();
-      } else {
-        logoutTimerRef.current = setTimeout(() => {
-          logout();
-          alert('Session expired. You have been logged out.');
-        }, timeLeft);
-      }
-    }
-  };
+        const timeout = exp * 1000 - Date.now();
+        if (timeout <= 0) {
+            logout();
+        } else {
+            logoutTimerRef.current = setTimeout(logout, timeout);
+        }
+    };
 
-  useEffect(() => {
-  const rawToken = localStorage.getItem('token');
+    useEffect(() => {
+        const storedToken = localStorage.getItem("token");
+        if (!storedToken) {
+            setLoading(false);
+            return;
+        }
 
-  if (rawToken) {
-    const savedToken = rawToken.trim().replace(/\s/g, "");
-    const payload = parseJwt(savedToken);
+        try {
+            const decoded = jwtDecode(storedToken);
+            if (decoded.exp * 1000 > Date.now()) {
+                setToken(storedToken);
+                setUser({
+                    username: decoded.sub,
+                    role: decoded.role,
+                });
+                scheduleLogout(storedToken);
+            } else {
+                localStorage.removeItem("token");
+            }
+        } catch {
+            localStorage.removeItem("token");
+        } finally {
+            setLoading(false);
+        }
 
-    if (payload?.sub) {
-      const expiryTimeMs = payload.exp ? payload.exp * 1000 : null;
+        return clearLogoutTimer;
+    }, []);
 
-      if (expiryTimeMs && expiryTimeMs > Date.now()) {
-        setUser({
-          username: payload.sub,
-          role: payload.role,
-        });
-        setToken(savedToken);
-        setLogoutTimer(savedToken);
-      } else {
-        localStorage.removeItem('token');
-      }
-    } else {
-      localStorage.removeItem('token');
-    }
-  }
-  
-  setLoading(false); 
+    const login = async (credentials) => {
+        const response = await loginApi(credentials.username, credentials.password);
+        console.log("Login API response:", response); // Debug log
+        const jwt = response?.data?.token?.trim();
+        if (!jwt) {
+            throw new Error("No token returned from server");
+        }
+        
+        localStorage.setItem("token", jwt);
 
-  return () => {
-    clearLogoutTimer();
-  };
-}, []); // ✅ Add dependency array
+        const decoded = jwtDecode(jwt);
+        const user = {
+            username: decoded.sub,
+            role:decoded.role,
+        };
+
+        setToken(jwt);
+        setUser(user);
+
+        scheduleLogout(jwt);
+        toast.success(response.message || "Login successful");
+
+        return user;
+    };
 
 
-  const login = async (credentials) => {
-    try {
-      const data = await api.post('/auth/login', credentials);
-      if (!data.token) {
-        throw new Error('Invalid login response: Token missing');
-      }
-      const cleanToken = data.token.trim().replace(/\s/g, '');
-      const parsed = parseJwt(cleanToken);
-      if (!parsed || !parsed.sub) {
-        throw new Error('Invalid JWT token received');
-      }
-      localStorage.setItem('token', cleanToken);
-      setToken(cleanToken);
-      setUser({
-  username: parsed.sub,
-  role: Array.isArray(parsed.role) ? parsed.role : [parsed.role], // ✅ Always convert to array
-});
-toast.success("Log in successfully")
-      setLogoutTimer(data.token);
-    } catch (err) {
-      throw new Error(err.message || 'Login failed');
-    }
-  };
+    const logout = () => {
+        localStorage.removeItem("token");
+        setToken(null);
+        setUser(null);
+        clearLogoutTimer();
+    };
 
-  const registerFarmer = async (credentials) => {
-    try {
-      const data=await api.post('/auth/register/farmer', credentials);
-      return data;
-    } catch (err) {
-      throw new Error(err.message || 'Registration failed');
-    }
-  };
+    const value = useMemo(
+        () => ({ user, token, loading, login, logout }),
+        [user, token, loading]
+    );
 
-  const registerRetailer = async (credentials) => {
-    try {
-      const data=await api.post('/auth/register/retailer', credentials);
-      return data;
-    } catch (err) {
-      throw new Error(err.message || 'Registration failed');
-    }
-  };
-
-  const updateStatus=async(credentials)=>{
-    try {
-      const data=await api.post('/admin/pendingUsers', credentials);
-      return data;
-    } catch (err) {
-      throw new Error(err.message || 'Registration failed');
-    }
-  }
-
-  const deleteAccount = async () => {
-    if (!window.confirm("Are you sure you want to delete your account? This cannot be undone.")) {
-      return;
-    }
-    try {
-      const response = await api.delete('/user/deleteUser', token);
-      const altmsg=response.message || "Deleted successfully"
-      
-      toast.warn(altmsg);
-      logout(); // clear auth
-    } catch (err) {
-      const errmsg=err.message || 'Delete failed';
-      toast.error(errmsg);
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setUser(null);
-    clearLogoutTimer();
-    toast.success("logout successfully");
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, token, login, logout, registerFarmer,registerRetailer,deleteAccount ,loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 AuthProvider.propTypes = {
-  children: PropTypes.node.isRequired,
+    children: PropTypes.node.isRequired,
 };
 
 export const useAuth = () => {
-  return useContext(AuthContext);
+    const ctx = useContext(AuthContext);
+    if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
+    return ctx;
 };
-

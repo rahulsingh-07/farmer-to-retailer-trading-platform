@@ -1,0 +1,7 @@
+.bootstrap-scope {
+  all: initial;
+}
+
+.bootstrap-scope * {
+  all: revert;
+}

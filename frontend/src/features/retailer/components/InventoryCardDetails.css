@@ -1,0 +1,98 @@
+.inventory-cardDetails{
+  width: 100%;
+  display: flex;
+  background: #00000060;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.carousel-and-bid{
+  width: 50%;
+  border-right: 2px solid black;
+}
+.crop-details h2{
+  width: 100%;
+  padding: 2px 8px;
+  color: wheat;
+}
+.bid-section {
+  padding: 4px 8px;
+  background: black
+}
+
+.current-bid-info {
+  display: flex;
+  justify-content: space-between;
+  color: #000;
+  align-items: center;
+  margin-bottom: 0.2rem;
+  padding: 1rem;
+  background: whitesmoke;
+}
+
+.bid-suggestion {
+  background: #d4edda;
+  color: #155724;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.bid-input-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.bid-input {
+  flex: 1;
+  min-width: 180px;
+  border: none;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.bid-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+}
+
+.unit-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+}
+
+/* =========================
+   FIXED PRICE (BUY NOW)
+========================= */
+.buy-input-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.unit-label {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #666;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .bid-input-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .bid-input {
+    min-width: auto;
+    text-align: left;
+  }
+}

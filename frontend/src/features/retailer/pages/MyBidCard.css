@@ -1,0 +1,103 @@
+.bid-card {
+  border-radius: 12px;
+  padding: 14px;
+  margin: 12px 0;
+  background: rgba(249, 248, 248, 0.497);
+  color: #000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-left: 5px solid #ccc;
+  transition: transform 0.2s ease;
+}
+
+.bid-card:hover {
+  transform: translateY(-4px);
+}
+
+.bid-card.leading {
+  border-left-color: #16a34a;
+}
+
+.bid-card.outbid {
+  border-left-color: #dc2626;
+}
+
+/* HEADER */
+.bid-card-header {
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.crop-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.variety {
+  font-size: 0.85rem;
+  color: #4b4b4b;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.active {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+/* BODY */
+.bid-card-body {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+.bid-card-body p {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge {
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.badge.leading {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge.outbid {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+.place-bid-btn {
+  padding: 8px 12px;
+  background-color: #2a9060;
+  color: rgb(17, 2, 2);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+.place-bid-btn:hover {
+  background-color: #0e5c36;
+  color: wheat;
+}
+.auction-end-btn {
+  padding: 8px 12px;
+  background-color: #888888;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+}

@@ -1,0 +1,67 @@
+.crop-card {
+  background: #0d0a0a;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  width: 260px;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.crop-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.crop-card-image img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.crop-card-body {
+  padding: 12px 14px 14px;
+}
+
+.crop-title {
+  font-size: 1rem;
+  margin: 0 0 4px;
+  color:wheat;
+}
+
+.crop-variety {
+  font-size: 0.85rem;
+  color: rgb(250, 250, 248);
+  margin: 0 0 8px;
+}
+
+.crop-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #fafafa;
+  margin-bottom: 8px;
+}
+
+.crop-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.price {
+  font-weight: 600;
+  color: #f1f6f3;
+}
+.base-price {
+  margin-left: 8px;
+  font-size: 0.8rem;
+  color: #d1d1d1;
+  text-decoration: line-through;
+}
+.time {
+  color: #f6f3f3;
+}

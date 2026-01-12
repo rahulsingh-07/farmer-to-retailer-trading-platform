@@ -1,0 +1,61 @@
+.order-details-container{
+    background-color: rgba(0, 0, 0, 0.222);
+    backdrop-filter: transparent;
+    margin: 20px;
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.order-details{
+    padding: 10px;
+}
+.order-content{
+    width: 50%;
+    margin: auto;
+    border-right: 2px solid rgb(238, 235, 235);
+}
+
+.status-tracker{
+    width: 50%;
+    height: full;
+}
+.otp-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.otp-modal {
+  background: #0b6f65;
+  padding: 20px;
+  width: 340px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.otp-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+}
+
+.btn-cancel{
+    background: rgb(149, 18, 18);
+    border-radius: 10px;
+    color: white;
+    padding: 8px 16px;
+} 
+.btn-confirm {
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: rgb(18, 201, 88);
+}
+.status-time {
+  font-size: 12px;
+  color: #4c5057;
+  margin-top: 4px;
+}
