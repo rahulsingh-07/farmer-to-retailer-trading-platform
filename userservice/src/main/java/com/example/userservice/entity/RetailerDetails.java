@@ -19,8 +19,7 @@ public class RetailerDetails {
     @OneToOne
     @JoinColumn(name = "user_id",nullable = false)
     private Users user;
-    private String shopName;
     private String businessAddress;
-    private String gstNumber;
     private String tradeLicenseUrl;
+    private String tradeLicenseCloudinaryPublicId;
 }

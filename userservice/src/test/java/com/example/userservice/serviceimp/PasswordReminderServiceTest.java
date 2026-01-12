@@ -1,7 +1,6 @@
 package com.example.userservice.serviceimp;
 
 import com.example.userservice.entity.Users;
-import com.example.userservice.notification.EmailService;
 import com.example.userservice.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +20,7 @@ class PasswordReminderServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private EmailService emailService;
+    private EmailServiceImp emailService;
 
     @InjectMocks
     private PasswordReminderService passwordReminderService;

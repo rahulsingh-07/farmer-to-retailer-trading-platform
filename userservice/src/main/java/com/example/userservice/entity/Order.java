@@ -1,7 +1,6 @@
 package com.example.userservice.entity;
 
 import com.example.userservice.enums.OrderStatus;
-import com.example.userservice.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,38 +19,37 @@ import java.util.UUID;
 public class Order {
     @Id @GeneratedValue private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "auction_id")
-    private Auction auction;           // Your auction link
-
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal finalPrice;
 
-    @ManyToOne
-    @JoinColumn(name = "crop_id")
-    private Crops crop;               // Crop details
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "crop_id", nullable = true)
+    private Crops crop;
 
-    @ManyToOne
-    @JoinColumn(name = "farmer_id")
-    private Users farmer;             // Crop.user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "farmer_id", nullable = true)
+    private Users farmer;
 
-    @ManyToOne
-    @JoinColumn(name = "retailer_id")
-    private Users retailer;           // highestBidderId → Users
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "retailer_id", nullable = true)
+    private Users retailer;
+    private String deliveryOtp;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
-
-    @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus;
-
+    private String paymentReferenceId;
     private LocalDateTime createdAt;
     private LocalDateTime confirmedAt;
+    private LocalDateTime paymentAt;
     private LocalDateTime shippedAt;
+    private LocalDateTime deliveredAt;
+
+    @Column(nullable = false)
+    private boolean reviewed = false;
 
     @PrePersist
     private void init() {
         if (orderStatus == null) orderStatus = OrderStatus.PENDING;
+        if (createdAt == null) createdAt = LocalDateTime.now();
     }
 
 

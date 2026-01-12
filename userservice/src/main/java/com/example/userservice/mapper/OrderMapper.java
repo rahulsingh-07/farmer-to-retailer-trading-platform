@@ -1,10 +1,11 @@
 package com.example.userservice.mapper;
 
-import com.example.userservice.dto.CropImageResponse;
-import com.example.userservice.dto.OrderFarmerResponse;
 import com.example.userservice.dto.OrderResponse;
-import com.example.userservice.dto.OrderRetailerResponse;
+import com.example.userservice.entity.CropImage;
 import com.example.userservice.entity.Order;
+import com.example.userservice.entity.Review;
+import com.example.userservice.records.OrderCardDto;
+import com.example.userservice.records.ReviewDto;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,62 +13,27 @@ import java.util.List;
 @Component
 public class OrderMapper {
 
-    public OrderFarmerResponse toFarmerDto(Order order){
-        List<CropImageResponse> imageResponses = order.getCrop().getImages()
-                .stream()
-                .map(img -> {
-                    CropImageResponse imgRes = new CropImageResponse();
-                    imgRes.setImageUrl(img.getImageUrl());
-                    return imgRes;
-                })
-                .toList();
-        return OrderFarmerResponse.builder()
-                .orderId(order.getId())
-                .status(order.getOrderStatus())
-                .cropName(order.getCrop().getCropName())
-                .category(order.getCrop().getCategory())
-                .quantity(order.getCrop().getQuantity())
-                .variety(order.getCrop().getVariety())
-                .imageUrl(imageResponses)
-                .retailerName(order.getRetailer().getFullName())
-                .createdAt(order.getCreatedAt())
-                .confirmedAt(order.getConfirmedAt())
-                .shippedAt(order.getShippedAt())
-                .build();
+
+    public OrderCardDto toResponseDto(Order order){
+
+        return new OrderCardDto(
+                order.getId(),
+                order.getFarmer().getFullName(),
+                order.getRetailer().getFullName(),
+                order.getOrderStatus(),
+                order.getCrop().getCropName(),
+                order.getCreatedAt(),
+                order.getCrop().getVariety(),
+                order.getCrop().getQuantity(),
+                order.getCrop().getImages().get(0).getImageUrl()
+        );
     }
 
-    public OrderRetailerResponse toRetailerDto(Order order){
-        List<CropImageResponse> imageResponses = order.getCrop().getImages()
+    public OrderResponse toDto(Order order, Review review){
+        List<String> imageUrls = order.getCrop()
+                .getImages()
                 .stream()
-                .map(img -> {
-                    CropImageResponse imgRes = new CropImageResponse();
-                    imgRes.setImageUrl(img.getImageUrl());
-                    return imgRes;
-                })
-                .toList();
-        return OrderRetailerResponse.builder()
-                .orderId(order.getId())
-                .status(order.getOrderStatus())
-                .cropName(order.getCrop().getCropName())
-                .category(order.getCrop().getCategory())
-                .quantity(order.getCrop().getQuantity())
-                .variety(order.getCrop().getVariety())
-                .imageUrl(imageResponses)
-                .farmerName(order.getFarmer().getFullName())
-                .createdAt(order.getCreatedAt())
-                .confirmedAt(order.getConfirmedAt())
-                .shippedAt(order.getShippedAt())
-                .build();
-    }
-
-    public OrderResponse toDto(Order order){
-        List<CropImageResponse> imageResponses = order.getCrop().getImages()
-                .stream()
-                .map(img -> {
-                    CropImageResponse imgRes = new CropImageResponse();
-                    imgRes.setImageUrl(img.getImageUrl());
-                    return imgRes;
-                })
+                .map(CropImage::getImageUrl)
                 .toList();
         return OrderResponse.builder()
                 .orderId(order.getId())
@@ -75,7 +41,7 @@ public class OrderMapper {
                 .createdAt(order.getCreatedAt())
                 .confirmedAt(order.getConfirmedAt())
                 .shippedAt(order.getShippedAt())
-                .paymentStatus(order.getPaymentStatus())
+                .review(review != null ? ReviewDto.from(review) : null)
 
                 //farmer details
                 .farmerName(order.getFarmer().getFullName())
@@ -92,6 +58,7 @@ public class OrderMapper {
                 //crop details
                 .cropName(order.getCrop().getCropName())
                 .category(order.getCrop().getCategory())
+                .cropType(order.getCrop().getCropType())
                 .variety(order.getCrop().getVariety())
                 .harvestDate(order.getCrop().getHarvestDate())
                 .quantity(order.getCrop().getQuantity())
@@ -100,8 +67,7 @@ public class OrderMapper {
                 .location(order.getCrop().getLocation())
                 .description(order.getCrop().getDescription())
                 .finalPrice(order.getFinalPrice())
-                .imageUrl(imageResponses)
-                .auctionId(order.getAuction().getId())
+                .imageUrl(imageUrls)
                 .build();
 
 

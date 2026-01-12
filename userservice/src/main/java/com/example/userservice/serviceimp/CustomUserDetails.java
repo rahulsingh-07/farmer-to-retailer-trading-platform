@@ -1,6 +1,7 @@
 package com.example.userservice.serviceimp;
 
 import com.example.userservice.entity.Users;
+import com.example.userservice.enums.UserRole;
 import com.example.userservice.enums.UserStatus;
 import lombok.Getter;
 import lombok.ToString;
@@ -18,6 +19,7 @@ public class CustomUserDetails implements UserDetails {
 
     private final UUID id;
     private final String username;
+    private final UserRole role;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
     private final UserStatus userStatus;
@@ -26,6 +28,7 @@ public class CustomUserDetails implements UserDetails {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
+        this.role=user.getRole();
         this.authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
         this.userStatus = user.getStatus();
     }
@@ -33,6 +36,8 @@ public class CustomUserDetails implements UserDetails {
     public UUID getUserId() {
         return id;
     }
+
+    public UserRole getUserRole(){ return role;}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -37,7 +37,10 @@ public class Users {
     @Column(nullable = false,unique = true)
     private String phoneNumber;
 
+    @Column(nullable = false)
     private String password;
+
+    private String approvedBy;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -54,9 +57,9 @@ public class Users {
 
     private int passwordResetAttempts = 0;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private FarmerDetails farmerDetails;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private RetailerDetails retailerDetails;
 }

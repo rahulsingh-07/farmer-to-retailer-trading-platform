@@ -1,62 +1,93 @@
 package com.example.userservice.controller;
 
 import com.example.userservice.dto.BidRequest;
-import com.example.userservice.dto.CropResponse;
-import com.example.userservice.entity.Crops;
-import com.example.userservice.farmer.AuctionService;
-import com.example.userservice.farmer.BidService;
-import com.example.userservice.farmer.CropService;
-import com.example.userservice.mapper.CropMapper;
-import com.example.userservice.serviceimp.CustomUserDetails;
+import com.example.userservice.enums.CropType;
+import com.example.userservice.records.ApiResponse;
+import com.example.userservice.records.BidDto;
+import com.example.userservice.records.CropCardDto;
+import com.example.userservice.records.RetailerCropDetailDto;
+import com.example.userservice.serviceimp.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/public")
 public class CropController {
-    private final AuctionService auctionService;
-    private final CropService cropService;
-    private final CropMapper cropMapper;
-    private final BidService bidService;
+    private final CropServiceImp cropServiceImp;
+    private final BidServiceImp bidServiceImp;
+    private final OrderServiceImp orderServiceImp;
 
+    // get all crops
     @GetMapping("/crops")
-    public ResponseEntity<Page<CropResponse>> getFilteredCrops(
+    public ResponseEntity<ApiResponse<Page<CropCardDto>>> getFilteredCrops(
+            @RequestParam(required = false)CropType cropType,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String location,
             @RequestParam(required = false) String variety,
-            @PageableDefault(size = 12)
             Pageable pageable) {
 
-        Page<Crops> crops = cropService.findAvailable(pageable, category, location, variety);
-        Page<CropResponse> response = cropMapper.toResponsePage(crops);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity
+                .ok(new ApiResponse<>(
+                        "Crops fetches successfully",
+                        cropServiceImp.findAvailableCrops(pageable,cropType, category, location, variety)
+                ));
     }
 
 
-
+    // place bid
     @PostMapping("/auctions/{auctionId}/bid")
-    public ResponseEntity<Map<String,String>> placeBid(@PathVariable UUID auctionId, @Valid @RequestBody BidRequest request, @AuthenticationPrincipal CustomUserDetails principal) {
-        String res=bidService.placeBid(auctionId,request,principal.getUserId());
-        return ResponseEntity.ok(Map.of("message",res));
+    public ResponseEntity<ApiResponse<Void>> placeBid(@PathVariable UUID auctionId, @Valid @RequestBody BidRequest request, @AuthenticationPrincipal CustomUserDetails principal) {
+        bidServiceImp.placeBid(auctionId,request,principal.getUserId());
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(
+                        "Bid placed successfully",
+                        null
+                ));
     }
 
-    @GetMapping("/crop/{id}")
-    public ResponseEntity<CropResponse> getCropDetail(@PathVariable UUID id){
+    // get retailer active auction bid
+    @GetMapping("/retailer/bids")
+    public ResponseEntity<ApiResponse<List<BidDto>>> getMyBids(@AuthenticationPrincipal CustomUserDetails user) {
+        UUID retailerId = user.getUserId();
+        return ResponseEntity
+                .ok(new ApiResponse<>(
+                        "All Current Active Bid",
+                        bidServiceImp.getActiveBidsByRetailer(retailerId)
+                ));
+    }
 
-        Crops crop=cropService.getCropDetail(id);
-        CropResponse response = cropMapper.toResponse(crop);
-        return ResponseEntity.ok(response);
+    // get crop details
+    @GetMapping("/crop/{id}")
+    public ResponseEntity<ApiResponse<RetailerCropDetailDto>> getCropDetail(@PathVariable UUID id){
+        return ResponseEntity
+                .ok(new ApiResponse<>(
+                        "getting crop by id",
+                        cropServiceImp.getCropDetail(id)
+                ));
+    }
+
+    // instant buy
+    @PostMapping("/crop/{id}/buy-now")
+    public ResponseEntity<ApiResponse<UUID>> buyNow(@PathVariable UUID id,
+                                    @AuthenticationPrincipal CustomUserDetails user) {
+        UUID orderId= orderServiceImp.createOrder(id,user.getUserId());
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(
+                        "Order Placed",
+                        orderId
+                ));
     }
 
 }

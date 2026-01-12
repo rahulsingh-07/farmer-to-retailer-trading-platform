@@ -20,6 +20,6 @@ public class FarmerDetails {
     @OneToOne
     @JoinColumn(name = "user_id",nullable = false)
     private Users user;
-    private String documentUrl;
+    private String pmKisanId;
     private String address;
 }

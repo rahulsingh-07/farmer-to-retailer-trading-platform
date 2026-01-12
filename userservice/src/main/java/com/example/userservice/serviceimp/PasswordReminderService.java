@@ -1,7 +1,6 @@
 package com.example.userservice.serviceimp;
 
 import com.example.userservice.entity.Users;
-import com.example.userservice.notification.EmailService;
 import com.example.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PasswordReminderService {
     private final UserRepository userRepository;
-    private final EmailService emailService;
+    private final EmailServiceImp emailService;
     private static final int MAX_ATTEMPTS = 3;
 
 

@@ -1,87 +1,116 @@
 package com.example.userservice.controller;
 
 import com.example.userservice.dto.*;
-import com.example.userservice.exception.UserNotFoundException;
+import com.example.userservice.records.ApiResponse;
+import com.example.userservice.records.LoginResponse;
+import com.example.userservice.records.PublicStats;
+import com.example.userservice.records.SetPasswordRequest;
 import com.example.userservice.serviceimp.AuthServiceImp;
 import com.example.userservice.serviceimp.TokenServiceImp;
 import com.example.userservice.serviceimp.UserServiceImp;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
-    private final UserServiceImp userService;
-    private final AuthServiceImp authService;
-    private final TokenServiceImp tokenService;
+    private final UserServiceImp userServiceImp;
+    private final AuthServiceImp authServiceImp;
+    private final TokenServiceImp tokenServiceImp;
     private static final String MSG = "message";
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginUser loginRequest) {
-        try {
-            LoginResponse response = authService.login(loginRequest);
-            return ResponseEntity.ok(response);
+    public ResponseEntity<ApiResponse<LoginResponse>> login(
+            @RequestBody LoginUser loginRequest) {
 
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of(MSG, e.getMessage()));
+        LoginResponse response = authServiceImp.login(loginRequest);
 
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(MSG, e.getMessage()));
-        }
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Login successful",
+                        response)
+        );
     }
 
+    // Farmer Registration
     @PostMapping("/register/farmer")
-    public ResponseEntity<Map<String,String>> farmer(@Valid @RequestBody FarmerRegisterRequest user){
-        return ResponseEntity.ok(Map.of(MSG,userService.createFarmerUser(user)));
-
+    public ResponseEntity<ApiResponse<Void>> farmer(@Valid @RequestBody FarmerRegisterRequest user){
+        userServiceImp.createFarmerUser(user);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(
+                        "Farmer registered successfully",
+                        null
+                ));
     }
 
-    @PostMapping("/register/retailer")
-    public ResponseEntity<Map<String,String>> retailer(@Valid @RequestBody RetailerRegisterRequest user){
-        return ResponseEntity.ok(Map.of(MSG,userService.createRetailerUser(user)));
-
+    // Retailer registration
+    @PostMapping(
+            value = "/register/retailer",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ApiResponse<Void>> retailer(@Valid @ModelAttribute RetailerRegisterRequest user,
+                                                      @RequestPart("tradeLicense") MultipartFile tradeLicense){
+        userServiceImp.createRetailerUser(user,tradeLicense);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(
+                        "Retailer registered successfully",
+                        null
+                ));
     }
 
-
+    // To Check is token valid or not
     @GetMapping("/validate-token")
-    public ResponseEntity<Map<String,Object>> validateToken(@RequestParam String token) {
-        try {
-            boolean isValid = tokenService.validateToken(token);
-            return ResponseEntity.ok(Map.of("valid", isValid));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(MSG, "Invalid token"));
-        }
+    public ResponseEntity<ApiResponse<Boolean>> validateToken(
+            @RequestParam String token) {
+        boolean isValid = tokenServiceImp.validateToken(token);
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Token validation result",
+                        isValid)
+        );
     }
 
+
+    // set password
     @PostMapping("/set-password")
-    public ResponseEntity<Map<String,String>> setPassword(@RequestParam String token, @RequestBody Map<String, String> request) {
-        try {
-            String password = request.get("password");
-            authService.setPassword(token, password);
-
-            return ResponseEntity.ok(Map.of(MSG, "Password set successfully"));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(MSG, e.getMessage()));
-        }
+    public ResponseEntity<ApiResponse<Void>> setPassword(@RequestParam String token,
+                                                         @Valid @RequestBody SetPasswordRequest request) {
+            authServiceImp.setPassword(token, request.password());
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(new ApiResponse<>(
+                            "Password set successfully",
+                            null
+                    ));
     }
 
-    @GetMapping("/totalUsers")
-    public ResponseEntity<Map<String,Integer>> getNumberUsers(){
-        return ResponseEntity.ok(userService.getPublicNumbers());
+    // landing page stats
+    @GetMapping("/landingPageStats")
+    public ResponseEntity<ApiResponse<PublicStats>> getLandingPageStatus(){
+        return ResponseEntity
+                .ok(new ApiResponse<>(
+                        "Public stats",
+                        userServiceImp.getPublicStats()
+                ));
     }
 
+    // forget password
     @PostMapping("/forgetPassword")
-    public ResponseEntity<Map<String,String>> forgetPassword(@Valid @RequestBody ForgetPasswordRequest email){
-        return ResponseEntity.ok(Map.of(MSG,authService.forgetPassword(email.getEmail())));
+    public ResponseEntity<ApiResponse<Void>> forgetPassword(@Valid @RequestBody ForgetPasswordRequest email){
+        return ResponseEntity
+                .ok(new ApiResponse<>(
+                        "Link send to your email update your password",
+                        null
+                ));
     }
 
 

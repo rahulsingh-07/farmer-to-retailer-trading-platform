@@ -2,6 +2,7 @@ package com.example.userservice.util;
 
 import com.example.userservice.entity.Auction;
 import com.example.userservice.enums.AuctionStatus;
+import com.example.userservice.enums.CropAvailability;
 import com.example.userservice.repository.AuctionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -24,14 +25,18 @@ public class AuctionScheduler {
         List<Auction> expired = auctionRepository
                 .findExpiredAuctions(AuctionStatus.ACTIVE, LocalDateTime.now());
 
-        expired.forEach(auction -> {
+        for (Auction auction : expired) {
+            if (auction.getHighestBidderId() == null) {
+                // No bids → no order
+                auction.setStatus(AuctionStatus.CLOSED);
+                continue;
+            }
             auction.setStatus(AuctionStatus.SOLD);
-            auctionRepository.save(auction);
+            auction.getCrop().setAvailability(CropAvailability.RESERVED);
 
-            //AUTO CREATE ORDER
             applicationEventPublisher.publishEvent(
-                    new AuctionClosedEvent(this,auction)
+                    new AuctionClosedEvent(this, auction)
             );
-        });
+        }
     }
 }

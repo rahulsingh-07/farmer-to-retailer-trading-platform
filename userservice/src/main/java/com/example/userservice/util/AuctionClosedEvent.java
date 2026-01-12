@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationEvent;
 @Getter
 @Setter
 public class AuctionClosedEvent extends ApplicationEvent {
-    private final Auction auction;
+    private final transient  Auction auction;
 
     public AuctionClosedEvent(Object source,Auction auction) {
         super(source);

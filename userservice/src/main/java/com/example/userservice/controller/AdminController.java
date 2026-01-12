@@ -1,73 +1,78 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.dto.AdminDTO;
-import com.example.userservice.entity.Users;
 import com.example.userservice.enums.UserStatus;
+import com.example.userservice.records.AdminCreateRequest;
+import com.example.userservice.records.AdminStatsDto;
+import com.example.userservice.records.ApiResponse;
+import com.example.userservice.records.PendingUserDTO;
 import com.example.userservice.serviceimp.AdminServiceImp;
+import com.example.userservice.serviceimp.CustomUserDetails;
 import com.example.userservice.serviceimp.UserServiceImp;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
-public class AdminController {
-    private final AdminServiceImp adminService;
-    private final UserServiceImp userService;
+public class
+AdminController {
+    private final AdminServiceImp adminServiceImp;
+    private final UserServiceImp userServiceImp;
 
+    // approved and reject pending request
     @PatchMapping("/user/{id}/status")
-    public ResponseEntity<Map<String,Object>> changeStatus(@PathVariable UUID id, @RequestParam UserStatus status) {
-        Users updatedUser = adminService.updateStatus(id, status);
+    public ResponseEntity<ApiResponse<Void>> changeStatus(@PathVariable UUID id,
+                                                          @RequestParam UserStatus status,
+                                                          @AuthenticationPrincipal CustomUserDetails principal) {
+
+        adminServiceImp.updateStatus(id,status,principal.getUsername());
 
         return ResponseEntity.ok(
-                Map.of(
-                        "message", "Status updated successfully",
-                        "userId", updatedUser.getId(),
-                        "newStatus", updatedUser.getStatus()
-                )
+                new ApiResponse<Void>(
+                        "Status updated successfully",
+                        null)
         );
     }
 
-
-
+    // fetch total pending users
     @GetMapping("/pendingUsers")
-    public ResponseEntity<Page<Map<String, Object>>> pendingUsers(
-            @PageableDefault(page = 0,size = 1, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-
-        Page<Users> pendingUsersPage = adminService.getPending(pageable);
-
-        Page<Map<String, Object>> response = pendingUsersPage.map(user -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("userId", user.getId());
-            map.put("fullName", user.getFullName());
-            map.put("email", user.getEmail());
-            map.put("phoneNumber", user.getPhoneNumber());
-            map.put("status", user.getStatus());
-            return map;
-        });
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ApiResponse<Page<PendingUserDTO>>> pendingUsers(Pageable pageable) {
+        return ResponseEntity
+                .ok(new ApiResponse<>(
+                        "Pending Users fetch successfully",
+                        adminServiceImp.getPending(pageable)
+                ));
     }
 
+    // create new admin
     @PostMapping("/newAdmin")
-    public ResponseEntity<Map<String,String>> retailer(@Valid @RequestBody AdminDTO admin){
-        return ResponseEntity.ok(Map.of("message",adminService.createAdminUser(admin)));
+    public ResponseEntity<ApiResponse<Void>> retailer(@Valid @RequestBody AdminCreateRequest admin,
+                                                      @AuthenticationPrincipal CustomUserDetails principal){
+        adminServiceImp.createAdminUser(admin,principal.getUsername());
+        return ResponseEntity.status(HttpStatus.SC_CREATED)
+                .body(new ApiResponse<>(
+                        "Admin created successfully",
+                        null));
 
     }
 
-    @GetMapping("/totalUsers")
-    public ResponseEntity<Map<String,Integer>> totalNumbers(){
-        return ResponseEntity.ok(userService.getAdminNumbers());
+    // get stats for admin dashboard
+    @GetMapping("/stats")
+    public ResponseEntity<ApiResponse<AdminStatsDto>> adminStats(@AuthenticationPrincipal CustomUserDetails principal){
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        "Dashboard stats",
+                        adminServiceImp.getUserStats(principal.getUsername())
+                )
+        );
     }
 
 

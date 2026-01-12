@@ -1,5 +1,9 @@
 package com.example.userservice.entity;
 
+import com.example.userservice.enums.CropAvailability;
+import com.example.userservice.enums.CropType;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +29,9 @@ public class Crops {
     @Column(nullable = false)
     private String cropName;
 
+    @Enumerated(EnumType.STRING)
+    private CropType cropType;
+
     @Column(nullable = false)
     private String category;
 
@@ -49,8 +56,12 @@ public class Crops {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // ✅ NEW: One-to-One Auction relationship
-    @OneToOne(mappedBy = "crop", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CropAvailability availability;
+
+    @OneToOne(mappedBy = "crop", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonManagedReference
     private Auction auction;
 
     private LocalDateTime createdAt;
@@ -59,6 +70,7 @@ public class Crops {
     private Users user;
 
     @OneToMany(mappedBy = "crop", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<CropImage> images=new ArrayList<>();
 
 }

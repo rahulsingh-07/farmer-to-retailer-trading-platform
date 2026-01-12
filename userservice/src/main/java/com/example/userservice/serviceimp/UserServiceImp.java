@@ -1,6 +1,12 @@
 package com.example.userservice.serviceimp;
 
-import com.example.userservice.config.UsernameGenerator;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.example.userservice.exception.DuplicateFieldException;
+import com.example.userservice.exception.FileUploadException;
+import com.example.userservice.records.PublicStats;
+import com.example.userservice.records.RetailerStats;
+import com.example.userservice.util.UsernameGenerator;
 import com.example.userservice.dto.FarmerRegisterRequest;
 import com.example.userservice.dto.RetailerRegisterRequest;
 import com.example.userservice.dto.UserUpdateDTO;
@@ -12,9 +18,13 @@ import com.example.userservice.repository.OrderRepository;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,45 +32,65 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImp implements UserService {
     private final UserRepository userRepository;
     private final UsernameGenerator usernameGenerator;
     private final PasswordEncoder passwordEncoder;
     private final OrderRepository orderRepository;
     private final NotificationRepository notificationRepository;
+    private final CloudinaryServiceImp cloudinaryServiceImp;
 
     @Override
-    public String createFarmerUser(FarmerRegisterRequest req) {
-        try {
-            String generatedUsername = usernameGenerator.generate(UserRole.FARMER);
-            String generatedPwd = usernameGenerator.generatePassword();
-            Users user = UserMapper.toFarmerUser(req, passwordEncoder.encode(generatedPwd), generatedUsername);
-            userRepository.save(user);
-            return "Registration successful";
-        } catch (IllegalArgumentException  | NullPointerException e) {
-            return "Registration failed: " + e.getMessage();  // "Email cannot be null"
-        } catch (Exception e) {
-            return "Registration failed: Unexpected error occurred";
+    public void createFarmerUser(FarmerRegisterRequest req) {
+        if (userRepository.existsByEmail(req.getEmail())) {
+            throw new DuplicateFieldException("Email already exists");
         }
+        String generatedUsername = usernameGenerator.generate(UserRole.FARMER);
+        String generatedPwd = usernameGenerator.generatePassword();
+        Users user = UserMapper.toFarmerUser(
+                req,
+                passwordEncoder.encode(generatedPwd),
+                generatedUsername
+        );
+
+        userRepository.save(user);
     }
+
     @Override
-    public String createRetailerUser(RetailerRegisterRequest req) {
+    public void createRetailerUser(RetailerRegisterRequest req, MultipartFile tradeLicense) {
+        if (userRepository.existsByEmail(req.getEmail())) {
+            throw new DuplicateFieldException("Email already exists");
+        }
         try {
+            Map<String, String> uploadResult = cloudinaryServiceImp.uploadFile(tradeLicense, "trade-licenses");
+            String licenseUrl = uploadResult.get("url");
+            String publicId = uploadResult.get("publicId");
+
             String generatedUsername = usernameGenerator.generate(UserRole.RETAILER);
             String generatedPwd = usernameGenerator.generatePassword();
-            Users user = UserMapper.toRetailerUser(req, passwordEncoder.encode(generatedPwd), generatedUsername);
+
+            // Map to Users entity
+            Users user = UserMapper.toRetailerUser(
+                    req,
+                    passwordEncoder.encode(generatedPwd),
+                    generatedUsername,
+                    licenseUrl,
+                    publicId
+            );
+
             userRepository.save(user);
-            return "Registration successful";
-        }catch (IllegalArgumentException | NullPointerException e) {
-            return "Registration failed: " + e.getMessage();
-        }catch (Exception e) {
-            return "Registration failed: Unexpected error occurred";
+
+        } catch (IOException e) {
+            log.error("Trade license upload failed", e);
+            throw new FileUploadException("Trade license upload failed", e);
         }
     }
 
 
 
-    public Users updateUserPartially(UUID id, UserUpdateDTO patchDTO) {
+
+    public void updateUserPartially(UUID id, UserUpdateDTO patchDTO) {
         Users user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -74,32 +104,25 @@ public class UserServiceImp implements UserService {
             user.setPhoneNumber(patchDTO.getPhone());
         }
         user.setUpdateAt(LocalDateTime.now());
-        return userRepository.save(user);
-    }
-
-    public Map<String, Integer> getAdminNumbers() {
-
-        Map<String, Integer> map = new HashMap<>();
-        map.put("totalUsers", userRepository.totalUsers());
-        map.put("totalPending", userRepository.totalPending());
-        map.put("totalAdmin", userRepository.totalAdmin());
-
-        return map;
-    }
-    public Map<String, Integer> getPublicNumbers() {
-        Map<String, Integer> map = new HashMap<>();
-        map.put("totalFarmer", userRepository.totalFarmer());
-        map.put("totalRetailer", userRepository.totalRetailer());
-        return map;
+        userRepository.save(user);
     }
 
 
-    public Map<String, Long> dashboardValues(UUID userId) {
-        Map<String,Long> map=new HashMap<>();
-        map.put("needConfirmation",orderRepository.countNeedConfirmedOrderByRetailerId(userId));
-        map.put("confirmed",orderRepository.countConfirmedOrderByRetailerId(userId));
-        map.put("shipped",orderRepository.countShippedOrderByRetailerId(userId));
-        map.put("notifications",notificationRepository.countUnreadByUserId(userId));
-        return map;
+    public PublicStats getPublicStats() {
+        return new PublicStats(
+                userRepository.totalFarmer(),
+                userRepository.totalRetailer()
+        );
+    }
+
+
+    public RetailerStats dashboardValues(UUID userId) {
+
+        return new RetailerStats(
+                orderRepository.countNeedConfirmedOrderByRetailerId(userId),
+                orderRepository.countConfirmedOrderByRetailerId(userId),
+                orderRepository.countShippedOrderByRetailerId(userId),
+                notificationRepository.countUnreadByUserId(userId)
+        );
     }
 }

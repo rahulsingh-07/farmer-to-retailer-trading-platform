@@ -4,6 +4,7 @@ import com.example.userservice.dto.BidResponse;
 import com.example.userservice.dto.FarmerCropDetailDto;
 import com.example.userservice.entity.Auction;
 import com.example.userservice.entity.Bid;
+import com.example.userservice.entity.CropImage;
 import com.example.userservice.entity.Crops;
 import org.springframework.stereotype.Component;
 
@@ -12,33 +13,47 @@ import java.util.List;
 @Component
 public class FarmerCropMapper {
     public FarmerCropDetailDto toFarmerCropDetailDto(Crops crop, List<Bid> bids) {
+
         Auction auction = crop.getAuction();
 
-        return FarmerCropDetailDto.builder()
-                .cropId(crop.getId())
-                .cropName(crop.getCropName())
-                .category(crop.getCategory())
-                .variety(crop.getVariety())
-                .quantity(crop.getQuantity())
-                .unit(crop.getUnit())
-                .pricePerUnit(crop.getPricePerUnit())
-                .location(crop.getLocation())
-                .harvestDate(crop.getHarvestDate())
-                .description(crop.getDescription())
-                .createdAt(crop.getCreatedAt())
+        List<String> imageUrls = crop.getImages() != null
+                ? crop.getImages()
+                .stream()
+                .map(CropImage::getImageUrl)
+                .toList()
+                : List.of();
 
-                // Auction details
-                .auctionId(auction.getId())
-                .auctionStartTime(auction.getStartTime() )
-                .auctionEndTime( auction.getEndTime())
-                .currentHighestBid( auction.getCurrentHighestBid())
-                .highestBidderId( auction.getHighestBidderId() )
-                .auctionStatus(auction.getStatus())
+        FarmerCropDetailDto.FarmerCropDetailDtoBuilder builder =
+                FarmerCropDetailDto.builder()
+                        .cropId(crop.getId())
+                        .cropName(crop.getCropName())
+                        .cropType(crop.getCropType())
+                        .category(crop.getCategory())
+                        .variety(crop.getVariety())
+                        .quantity(crop.getQuantity())
+                        .unit(crop.getUnit())
+                        .pricePerUnit(crop.getPricePerUnit())
+                        .location(crop.getLocation())
+                        .harvestDate(crop.getHarvestDate())
+                        .description(crop.getDescription())
+                        .createdAt(crop.getCreatedAt())
+                        .imageUrl(imageUrls)
+                        .bids(mapBids(bids));
 
-                // Bids passed from service layer
-                .bids(mapBids(bids))
-                .build();
+        // Auction fields ONLY if auction exists
+        if (auction != null) {
+            builder
+                    .auctionId(auction.getId())
+                    .auctionStartTime(auction.getStartTime())
+                    .auctionEndTime(auction.getEndTime())
+                    .currentHighestBid(auction.getCurrentHighestBid())
+                    .highestBidderId(auction.getHighestBidderId())
+                    .auctionStatus(auction.getStatus());
+        }
+
+        return builder.build();
     }
+
 
     private List<BidResponse> mapBids(List<Bid> bids) {
 
@@ -55,7 +70,7 @@ public class FarmerCropMapper {
         return BidResponse.builder()
                 .id(bid.getId())
                 .amount(bid.getAmount())
-                .bidderName(bid.getUser().getFullName())
+                .bidderName(bid.getBidder().getFullName())
                 .createdAt(bid.getCreatedAt())
                 .build();
     }

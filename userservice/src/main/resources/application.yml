@@ -26,3 +26,6 @@ cloudinary:
   api-key: ${CLOUDINARY_API_KEY:dummy}
   api-secret: ${CLOUDINARY_API_SECRET:dummy}
 my_api_key: ${MY_SHA256_KEY:this_is_a_test_api_key_32_bytes_min!!}
+
+razorpay.api.key: ${RAZORPAY_API_KEY}
+razorpay.api.secret: ${RAZORPAY_API_SECRET}

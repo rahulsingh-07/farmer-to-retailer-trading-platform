@@ -18,9 +18,6 @@ public class UserMapper {
 
     // FARMER REGISTRATION
     public static Users toFarmerUser(FarmerRegisterRequest req, String encodedPassword, String username) {
-        if (req.getEmail() == null) {
-            throw new IllegalArgumentException("Email cannot be null");
-        }
         Users user = new Users();
         user.setFullName(req.getFullName());
         user.setEmail(req.getEmail().toLowerCase(Locale.ROOT));
@@ -36,17 +33,18 @@ public class UserMapper {
         FarmerDetails details = new FarmerDetails();
         details.setUser(user);
         details.setAddress(req.getAddress());
-        details.setDocumentUrl(req.getDocumentUrl());
+        details.setPmKisanId(req.getPmKisanId());
 
         user.setFarmerDetails(details);
         return user;
     }
 
     // RETAILER REGISTRATION
-    public static Users toRetailerUser(RetailerRegisterRequest req, String encodedPassword, String username) {
-        if (req.getEmail() == null) {
-            throw new IllegalArgumentException("Email cannot be null");
-        }
+    public static Users toRetailerUser(RetailerRegisterRequest req,
+                                       String encodedPassword,
+                                       String username,
+                                       String tradeLicenseUrl,
+                                       String tradeLicensePublicId) {
         Users user = new Users();
         user.setFullName(req.getFullName());
         user.setEmail(req.getEmail().toLowerCase(Locale.ROOT));
@@ -60,10 +58,9 @@ public class UserMapper {
 
         RetailerDetails details = new RetailerDetails();
         details.setUser(user);
-        details.setShopName(req.getShopName());
+        details.setTradeLicenseUrl(tradeLicenseUrl);
+        details.setTradeLicenseCloudinaryPublicId(tradeLicensePublicId);
         details.setBusinessAddress(req.getBusinessAddress());
-        details.setGstNumber(req.getGstNumber());
-        details.setTradeLicenseUrl(req.getTradeLicenseUrl());
 
         user.setRetailerDetails(details);
         return user;

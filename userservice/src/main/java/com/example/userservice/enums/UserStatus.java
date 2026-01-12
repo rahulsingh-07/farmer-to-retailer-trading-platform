@@ -1,8 +1,8 @@
 package com.example.userservice.enums;
 
 public enum UserStatus {
-    ACTIVE,
-    INACTIVE,
-    BLOCKED,
-    PENDING
+    PENDING, // registration requirest
+    INACTIVE, // approve by admin
+    ACTIVE,   // update password
+    REJECTED  // rejected by admin
 }

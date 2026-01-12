@@ -1,12 +1,13 @@
 package com.example.userservice.mapper;
 
-import com.example.userservice.dto.CropImageResponse;
 import com.example.userservice.dto.CropRequest;
-import com.example.userservice.dto.CropResponse;
 import com.example.userservice.entity.Auction;
 import com.example.userservice.entity.Crops;
 import com.example.userservice.entity.Users;
 import com.example.userservice.enums.AuctionStatus;
+import com.example.userservice.enums.CropAvailability;
+import com.example.userservice.enums.CropType;
+import com.example.userservice.records.CropCardDto;
 import com.example.userservice.repository.AuctionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,8 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -25,6 +24,8 @@ public class CropMapper {
     public Crops toEntity(CropRequest request, Users user) {
         Crops crops = new Crops();
         crops.setCropName(request.getCropName().trim());
+        crops.setCropType(request.getCropType());
+        crops.setAvailability(CropAvailability.AVAILABLE);
         crops.setCategory(request.getCategory().trim());
         crops.setVariety(request.getVariety().trim());
         crops.setQuantity(request.getQuantity());
@@ -37,20 +38,22 @@ public class CropMapper {
         crops.setUser(user);
         crops.setCreatedAt(LocalDateTime.now());
 
-        Auction auction = new Auction();
-        auction.setCrop(crops);
-        auction.setStartTime(LocalDateTime.now());
-        auction.setEndTime(LocalDateTime.now().plusDays(7)); // example
-        auction.setStatus(AuctionStatus.ACTIVE);
-        auction.setCurrentHighestBid(BigDecimal.ZERO);
-
-        crops.setAuction(auction);
+        if (request.getCropType() == CropType.AUCTION) {
+            Auction auction = new Auction();
+            auction.setCrop(crops);
+            auction.setStartTime(LocalDateTime.now());
+            auction.setEndTime(LocalDateTime.now().plusDays(7));
+            auction.setStatus(AuctionStatus.ACTIVE);
+            auction.setCurrentHighestBid(BigDecimal.ZERO);
+            crops.setAuction(auction);
+        }
         return crops;
     }
 
     public CropRequest toDto(Crops crops) {
         CropRequest request = new CropRequest();
         request.setCropName(crops.getCropName());
+        request.setCropType(crops.getCropType());
         request.setCategory(crops.getCategory());
         request.setVariety(crops.getVariety());
         request.setQuantity(crops.getQuantity());
@@ -62,53 +65,34 @@ public class CropMapper {
         return request;
     }
 
-    public CropResponse toResponse(Crops crop) {
-        Auction auction = auctionRepository.findByCropId(crop.getId())
-                .orElseThrow(() -> new IllegalStateException("Auction not found"));
+    public CropCardDto toCard(Crops crop) {
+        BigDecimal currentHighestBid = null;
+        LocalDateTime auctionEndTime = null;
 
-        List<CropImageResponse> imageResponses = crop.getImages()
-                .stream()
-                .map(img -> {
-                    CropImageResponse imgRes = new CropImageResponse();
-                    imgRes.setImageUrl(img.getImageUrl());
-                    return imgRes;
-                })
-                .toList();
+        if (crop.getCropType() == CropType.AUCTION && crop.getAuction() != null) {
+            currentHighestBid = crop.getAuction().getCurrentHighestBid();
+            auctionEndTime = crop.getAuction().getEndTime();
+        }
 
-        return CropResponse.builder()
-                .id(crop.getId())
-                .cropName(crop.getCropName())
-                .category(crop.getCategory())
-                .variety(crop.getVariety())
-                .quantity(crop.getQuantity())
-                .unit(crop.getUnit())
-                .location(crop.getLocation())
-                .pricePerUnit(crop.getPricePerUnit())
-                .description(crop.getDescription())
-                .harvestDate(crop.getHarvestDate())
-                .currentHighestBid(auction.getCurrentHighestBid())
-                .auctionId(auction.getId())
-                .daysLeft(calculateDaysLeft(auction.getEndTime()))
-                .auctionStatus(auction.getStatus().name())
-
-                .imageUrl(imageResponses)
-                .farmerName(crop.getUser().getFullName()) // Assuming Users has fullName
-                .build();
+        return new CropCardDto(
+                crop.getId(),
+                crop.getCropName(),
+                crop.getCropType(),
+                crop.getVariety(),
+                crop.getQuantity(),
+                crop.getUnit(),
+                crop.getLocation(),
+                crop.getPricePerUnit(),
+                crop.getHarvestDate(),
+                currentHighestBid,
+                auctionEndTime,
+                crop.getImages().get(0)
+        );
     }
 
-    private Long calculateDaysLeft(LocalDateTime endTime) {
-        return ChronoUnit.DAYS.between(LocalDateTime.now(), endTime);
-    }
-
-    // For Page<Crops> → Page<CropResponse>
-    public Page<CropResponse> toResponsePage(Page<Crops> cropsPage) {
-        return cropsPage.map(this::toResponse);
-    }
-
-    public List<CropResponse> toResponse(List<Crops> crops) {
-        return crops.stream()
-                .map(this::toResponse)
-                .toList();
+    // For Page<Crops> → Page<CropCardDto>
+    public Page<CropCardDto> toCard(Page<Crops> cropsPage) {
+        return cropsPage.map(this::toCard);
     }
 
 }

@@ -12,7 +12,6 @@ import java.util.UUID;
 @Builder
 public class NotificationDTO {
     private UUID id;
-    private String bidderFullName;
     private NotificationType type;
     private UUID auctionId;
     private LocalDateTime createdAt;

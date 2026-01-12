@@ -42,7 +42,7 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // ✅ Extract userId
+    //Extract userId
     public UUID extractUserId(String token) {
         try {
             String userIdStr = extractClaim(token, claims ->

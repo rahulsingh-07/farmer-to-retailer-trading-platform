@@ -1,5 +1,6 @@
 package com.example.userservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,5 +23,6 @@ public class CropImage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "crop_id")
+    @JsonBackReference
     private Crops crop;
 }

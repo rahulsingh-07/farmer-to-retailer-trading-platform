@@ -1,7 +1,8 @@
 package com.example.userservice.dto;
 
+import com.example.userservice.enums.CropType;
 import com.example.userservice.enums.OrderStatus;
-import com.example.userservice.enums.PaymentStatus;
+import com.example.userservice.records.ReviewDto;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,10 +17,11 @@ import java.util.UUID;
 public class OrderResponse {
     private UUID orderId;
     private OrderStatus status;
-    private PaymentStatus paymentStatus;
     private LocalDateTime createdAt;
     private LocalDateTime confirmedAt;
+    private LocalDateTime paymentAt;
     private LocalDateTime shippedAt;
+    private ReviewDto review;
 
     //farmer details
     private String farmerName;
@@ -36,6 +38,7 @@ public class OrderResponse {
     //crop details
     private String cropName;
     private String category;
+    private CropType cropType;
     private String variety;
     private Double quantity;
     private String unit;
@@ -43,7 +46,7 @@ public class OrderResponse {
     private String description;
     private BigDecimal pricePerUnit;        // Base price
     private LocalDate harvestDate;
-    private List<CropImageResponse> imageUrl;
+    private List<String> imageUrl;
     private BigDecimal finalPrice;
     private UUID auctionId;
 

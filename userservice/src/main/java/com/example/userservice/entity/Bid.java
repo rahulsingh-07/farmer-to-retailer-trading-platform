@@ -1,5 +1,6 @@
 package com.example.userservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,14 +21,15 @@ public class Bid {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_id", nullable = false)
+    @JsonBackReference
     private Auction auction;
 
     @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "farmer_id", nullable = false)
-    private Users user;
+    @JoinColumn(name = "bidder_id", nullable = false)
+    private Users bidder;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

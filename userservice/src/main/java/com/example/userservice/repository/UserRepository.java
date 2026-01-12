@@ -2,6 +2,8 @@ package com.example.userservice.repository;
 
 import com.example.userservice.entity.Users;
 import com.example.userservice.enums.UserStatus;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,19 +24,24 @@ public interface UserRepository extends JpaRepository<Users, UUID> {
     @Query("SELECT u FROM Users u WHERE u.status = :status")
     Page<Users> findByStatus(@Param("status") UserStatus status, Pageable pageable);
     @Query("SELECT COUNT(u) FROM Users u WHERE u.status = 'ACTIVE'")
-    int totalUsers();
+    long totalUsers();
 
     @Query("SELECT COUNT(u) FROM Users u WHERE u.status = 'ACTIVE' AND u.role = 'FARMER'")
-    int totalFarmer();
+    long totalFarmer();
 
     @Query("SELECT COUNT(u) FROM Users u WHERE u.status = 'ACTIVE' AND u.role = 'RETAILER'")
-    int totalRetailer();
+    long totalRetailer();
 
     @Query("SELECT COUNT(u) FROM Users u WHERE u.status = 'PENDING'")
-    int totalPending();
+    long totalPending();
 
     @Query("SELECT COUNT(u) FROM Users u WHERE u.status = 'ACTIVE' AND u.role = 'ADMIN'")
-    int totalAdmin();
+    long totalAdmin();
 
     Optional<Users> findByEmail(String email);
+
+    @Query("SELECT COUNT(u) FROM Users u WHERE u.approvedBy =:username")
+    long totalApproved(@Param("username") String username);
+
+    boolean existsByEmail(@Email(message = "Invalid email") @NotBlank(message = "Email cannot be empty") String email);
 }

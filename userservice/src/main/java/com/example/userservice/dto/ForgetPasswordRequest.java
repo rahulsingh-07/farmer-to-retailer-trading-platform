@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 public class ForgetPasswordRequest {
     @NotBlank
-    @Email
+    @Email(message = "email required")
     private String email;
 }

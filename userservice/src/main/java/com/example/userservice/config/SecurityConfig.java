@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.security.SecureRandom;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -34,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**","/swagger-ui/**",
                                 "/v3/api-docs/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/payment/**").hasRole("RETAILER")
                         .requestMatchers("/farmer/**").hasRole("FARMER")
                         .requestMatchers(HttpMethod.GET, "/public/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/public/**").hasAnyRole("ADMIN","FARMER","RETAILER")
@@ -55,4 +58,6 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
+    @Bean
+    public SecureRandom secureRandom() { return new SecureRandom(); }
 }

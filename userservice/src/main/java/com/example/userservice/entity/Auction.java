@@ -1,6 +1,7 @@
 package com.example.userservice.entity;
 
 import com.example.userservice.enums.AuctionStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +24,8 @@ public class Auction {
 
     @OneToOne
     @JoinColumn(name = "crop_id", nullable = false)
-    private Crops crop;  //Owns the relationship
+    @JsonBackReference
+    private Crops crop;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;

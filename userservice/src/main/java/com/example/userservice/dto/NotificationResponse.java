@@ -19,19 +19,11 @@ public class NotificationResponse {
     private LocalDateTime createdAt;
     private NotificationType type;
     private AuctionStatus status;
-
-    // Crop details (embedded)
-    private UUID cropId;
+    //crop details
     private String cropName;
     private String category;
     private String variety;
     private Double quantity;
     private String unit;
-    private List<CropImageResponse> imageUrl;
-
-    // Bidder details
-    private String bidderFullName;
-    private String bidderPhoneNumber;
-    private String bidderAddress;
-
+    private List<String> imageUrl;
 }

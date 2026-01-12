@@ -1,13 +1,11 @@
 package com.example.userservice.util;
 
 import com.example.userservice.entity.Auction;
-import com.example.userservice.entity.Crops;
 import com.example.userservice.entity.Order;
 import com.example.userservice.entity.Users;
 import com.example.userservice.enums.OrderStatus;
-import com.example.userservice.enums.PaymentStatus;
-import com.example.userservice.farmer.NotificationService;
-import com.example.userservice.notification.EmailService;
+import com.example.userservice.serviceimp.EmailServiceImp;
+import com.example.userservice.serviceimp.NotificationServiceImp;
 import com.example.userservice.repository.OrderRepository;
 import com.example.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,49 +24,67 @@ import java.util.UUID;
 public class AuctionOrderListener {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository; // For highestBidderId
-    private final EmailService emailService;
-    private final NotificationService notificationService;
+    private final EmailServiceImp emailServiceImp;
+    private final NotificationServiceImp notificationServiceImp;
 
     @EventListener
     @Transactional
     public void autoCreateOrder(AuctionClosedEvent event) {
         Auction auction = event.getAuction();
 
-        //YOUR EXISTING DATA PATH
+        if (auction.getHighestBidderId() == null) {
+            throw new IllegalStateException("Auction closed without a winner");
+        }
+
+        if (auction.getCrop() == null || auction.getCrop().getUser() == null) {
+            throw new IllegalStateException("Auction has invalid crop or farmer");
+        }
+
+        Users retailer = getRetailerById(auction.getHighestBidderId());
+
         Order order = Order.builder()
-                .auction(auction)
                 .crop(auction.getCrop())
                 .farmer(auction.getCrop().getUser())
-                .retailer(getRetailerById(auction.getHighestBidderId()))
+                .retailer(retailer)
                 .finalPrice(auction.getCurrentHighestBid())
                 .orderStatus(OrderStatus.PENDING)
-                .paymentStatus(PaymentStatus.PENDING)
                 .createdAt(LocalDateTime.now())
                 .build();
 
         orderRepository.save(order);
-        String farmerEmail=auction.getCrop().getUser().getEmail();
-        String farmerName=auction.getCrop().getUser().getFullName();
-        String cropName   = order.getAuction().getCrop().getCropName();
-        BigDecimal price  = order.getFinalPrice();
-        String retailerName = order.getRetailer().getFullName();
-        String retailerEmail=order.getRetailer().getEmail();
 
-        notificationService.notifyFarmerAuctionWon(order.getAuction(),order.getCrop(),order.getFarmer(),order.getRetailer(),price);
-        notificationService.notifyWinner(order.getAuction(),order.getCrop(),order.getFarmer(),order.getRetailer(),price);
-
-
-        log.info("Calling emailService.notifyFarmerAuctionWon for farmerId");
-        emailService.notifyFarmerAuctionWon(farmerEmail,farmerName,cropName,price,retailerName);
-
-        log.info("Calling emailService.notifyWinner for retailerId={}",getRetailerById(auction.getHighestBidderId()).getId());
-        emailService.notifyWinner(retailerEmail,retailerName,cropName,price,farmerName);
-        log.info("autoCreateOrder END auctionId");
+        notifyUsers(auction, order, retailer);
     }
+
 
     private Users getRetailerById(UUID retailerId) {
         return userRepository.findById(retailerId)
                 .orElseThrow(() -> new RuntimeException("Winner not found"));
     }
+
+    private void notifyUsers(Auction auction, Order order, Users retailer) {
+        BigDecimal price = order.getFinalPrice();
+
+        notificationServiceImp.notifyFarmerAuctionWon(
+                auction, order.getCrop(), order.getFarmer(), retailer, price);
+
+        notificationServiceImp.notifyWinner(
+                auction, order.getCrop(), order.getFarmer(), retailer, price);
+
+        emailServiceImp.notifyFarmerAuctionWon(
+                order.getFarmer().getEmail(),
+                order.getFarmer().getFullName(),
+                order.getCrop().getCropName(),
+                price,
+                retailer.getFullName());
+
+        emailServiceImp.notifyWinner(
+                retailer.getEmail(),
+                retailer.getFullName(),
+                order.getCrop().getCropName(),
+                price,
+                order.getFarmer().getFullName());
+    }
+
 }
 

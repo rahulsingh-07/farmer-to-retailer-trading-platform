@@ -1,6 +1,7 @@
 package com.example.userservice.dto;
 
 import com.example.userservice.enums.AuctionStatus;
+import com.example.userservice.enums.CropType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class FarmerCropDetailDto {
 
     private UUID cropId;
     private String cropName;
+    private CropType cropType;
     private String category;
     private String variety;
     private Double quantity;
@@ -29,6 +31,7 @@ public class FarmerCropDetailDto {
     private LocalDate harvestDate;
     private String description;
     private LocalDateTime createdAt;
+    private List<String> imageUrl;
 
     // Auction details
     private UUID auctionId;
