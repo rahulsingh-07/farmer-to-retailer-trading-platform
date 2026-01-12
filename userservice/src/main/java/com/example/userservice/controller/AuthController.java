@@ -26,6 +26,7 @@ public class AuthController {
     private final TokenServiceImp tokenServiceImp;
     private static final String MSG = "message";
 
+    //login
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(
             @RequestBody LoginUser loginRequest) {
