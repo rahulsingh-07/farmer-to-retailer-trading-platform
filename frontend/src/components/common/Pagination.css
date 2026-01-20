@@ -6,6 +6,9 @@
   background: #6d6c6c8b;
   border-top: 1px solid #090a0a;
   flex-wrap: wrap;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
   gap: 1rem;
 }
 

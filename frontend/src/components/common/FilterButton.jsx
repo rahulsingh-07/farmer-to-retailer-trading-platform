@@ -66,7 +66,7 @@ const FilterButton = ({
               )}
               <FiX 
                 size={14} 
-                className="close-btn"
+                className="filter-close-btn"
                 onClick={() => setIsOpen(false)}
               />
             </div>

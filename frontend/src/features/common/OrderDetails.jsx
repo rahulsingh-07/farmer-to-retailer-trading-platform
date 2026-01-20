@@ -58,8 +58,6 @@ export default function OrderDetails() {
   }, [orderId, user]);
 
 
-  console.log('Order Details - Order:', order);
-
   //Farmer: Confirm Order (PENDING → CONFIRMED)
   const handleConfirmOrder = async () => {
     if (!window.confirm("Confirm this order? Retailer will be notified.")) return;
@@ -190,7 +188,7 @@ export default function OrderDetails() {
             />
           ) : (
             <div className="no-images-placeholder">
-              <img src="/placeholder-order.png" alt="Order" />
+              <img src="/placeholder.png" alt="Order" />
             </div>
           )}
 

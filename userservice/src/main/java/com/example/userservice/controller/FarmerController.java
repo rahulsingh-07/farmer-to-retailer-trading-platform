@@ -6,7 +6,6 @@ import com.example.userservice.records.ApiResponse;
 import com.example.userservice.records.CropCardDto;
 import com.example.userservice.records.FarmerStats;
 import com.example.userservice.serviceimp.*;
-import com.example.userservice.mapper.CropMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +25,7 @@ import java.util.UUID;
 @Slf4j
 public class FarmerController {
     private final CropServiceImp cropServiceImp;
-    private final NotificationServiceImp notificationServiceImp;
     private final OrderServiceImp orderServiceImp;
-    private final CropMapper cropMapper;
 
 
     // add crop

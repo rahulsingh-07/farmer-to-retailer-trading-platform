@@ -1,98 +1,120 @@
-.inventory-cardDetails{
-  width: 100%;
-  display: flex;
-  background: #00000060;
-  border-radius: 10px;
+.inventory-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+  padding: 20px;
+  color: black;
+}
+
+.left-panel {
+  background: #fff;
+  border-radius: 16px;
   overflow: hidden;
 }
 
-.carousel-and-bid{
-  width: 50%;
-  border-right: 2px solid black;
-}
-.crop-details h2{
-  width: 100%;
-  padding: 2px 8px;
-  color: wheat;
-}
-.bid-section {
-  padding: 4px 8px;
-  background: black
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.current-bid-info {
+.info-card {
+  background: #f9fafb;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.crop-title {
+  color:#036423;
+  margin-bottom: 16px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.place-bid-card {
+  border-radius: 12px;
+  padding: 14px;
+  margin: 12px 0;
+  background: rgba(249, 248, 248, 0.93);
+  color: #000;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 78%);
+  border-left: 5px solid #666161;
+  transition: transform 0.2s ease;
+}
+
+.bid-header {
   display: flex;
   justify-content: space-between;
-  color: #000;
   align-items: center;
-  margin-bottom: 0.2rem;
-  padding: 1rem;
-  background: whitesmoke;
+  margin-bottom: 16px;
 }
 
-.bid-suggestion {
-  background: #d4edda;
-  color: #155724;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
+.bid-header .label {
+  font-size: 13px;
+  color: #6b7280;
 }
-.bid-input-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #ffffff;
-  padding: 12px;
-  border-radius: 10px;
+
+.bid-header h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.suggested-chip {
+  background: #e6f4ea;
+  color: #137333;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
 }
 
 .bid-input {
-  flex: 1;
-  min-width: 180px;
-  border: none;
-  font-size: 1.2rem;
-  font-weight: 600;
-  text-align: center;
-}
-
-.bid-input:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
-}
-
-.unit-label {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #555;
-  white-space: nowrap;
-}
-
-/* =========================
-   FIXED PRICE (BUY NOW)
-========================= */
-.buy-input-group {
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 20px 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
 }
 
-.unit-label {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #666;
-  white-space: nowrap;
+.bid-input input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
 }
 
-@media (max-width: 768px) {
-  .bid-input-group {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .bid-input {
-    min-width: auto;
-    text-align: left;
-  }
+.bid-input span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.similar-products-section{
+  display: flex;
+  background: #ffffff6b;
+  gap: 16px;
+  justify-content: start;
+  padding: 10px;
+}
+.no-similar-crops{
+  height: 290px;
+  background: #c9c7c787;
+  border-radius: 10px;
+}
+.no-similar-crops div{
+  margin: 10px;
+  padding: 10px;
+  height: 100px;
+  font-size: 18px;
+  border-radius: 10px;
+  color: rgb(243, 241, 241);
+  background: #4342428f;
 }

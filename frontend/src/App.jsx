@@ -2,6 +2,7 @@ import React from "react";
 import AppRoutes from "./app/routes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AgriChatbot from "./features/common/AgriChatbot";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         newestOnTop
         theme="light"
       />
+      <AgriChatbot/>
     </>
   );
 };

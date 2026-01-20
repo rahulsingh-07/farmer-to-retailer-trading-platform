@@ -14,6 +14,12 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import {
+  Package,
+  Clock,
+  Bell
+} from "lucide-react";
+
 const RetailerDashboard = () => {
   const { user, token } = useAuth();
 
@@ -105,7 +111,6 @@ const RetailerDashboard = () => {
         );
 
         const result = await response.json();
-        console.log("Dashboard summary data:", result);
 
         // ✅ CORRECT UNWRAP
         const stats = result?.data || {};
@@ -134,7 +139,6 @@ const RetailerDashboard = () => {
   /* =========================
      FALLBACK UI DATA
      ========================= */
-  const renderedSignals =
     supplierSignals.length > 0
       ? supplierSignals
       : [
@@ -146,32 +150,36 @@ const RetailerDashboard = () => {
         },
       ];
 
-  const heroPills = renderedSignals.slice(0, 3).map((s) => s.name);
-
   const highlightCards = [
-    {
-      id: "orders",
-      label: "Total orders",
-      value: orderStats.total,
-      delta: `${orderStats.confirmed} confirmed`,
-      icon: "📦",
-    },
-    {
-      id: "confirm",
-      label: "Need confirmation",
-      value: orderStats.needConfirmation,
-      delta: `${orderStats.shipped} shipped`,
-      icon: "⏳",
-    },
-    {
-      id: "notifications",
-      label: "Unread alerts",
-      value: unreadNotifications,
-      delta: "Notifications",
-      icon: "🔔",
-    },
+  {
+    id: "orders",
+    label: "Total Orders",
+    value: orderStats.total,
+    delta: `${orderStats.confirmed} confirmed`,
+    icon: Package,
+    bg: "#d9e6f7",
+    color: "#2563eb"
+  },
+  {
+    id: "confirm",
+    label: "Need Confirmation",
+    value: orderStats.needConfirmation,
+    delta: `${orderStats.shipped} shipped`,
+    icon: Clock,
+    bg: "#fff0de",
+    color: "#f97316"
+  },
+  {
+    id: "notifications",
+    label: "Unread Alerts",
+    value: unreadNotifications,
+    delta: "Notifications",
+    icon: Bell,
+    bg: "#f9f5d0",
+    color: "#ca8a04"
+  }
+];
 
-  ];
 
   const orderStatusChartData = [
     { status: "Confirmed", count: orderStats.confirmed },
@@ -204,42 +212,44 @@ const RetailerDashboard = () => {
 
           <div className="rd-cta-row">
             <Link to="/retailer/inventory" className="rd-btn primary">
-              Update inventory
+            Inventory
             </Link>
             <Link to="/retailer/orders" className="rd-btn ghost">
               View orders
             </Link>
           </div>
         </div>
-
-        <div className="rd-hero-card">
-          <div className="rd-hero-label"></div>
-          <div className="rd-hero-metric">
-            {orderStats.total} orders
-          </div>
-          <p className="rd-hero-note">
-            {orderStats.needConfirmation} need confirmation
-          </p>
-          <div className="rd-hero-pills">
-            {heroPills.map((pill, idx) => (
-              <span key={idx}>{pill}</span>
-            ))}
-          </div>
-        </div>
       </header>
 
       <section className="rd-stats-grid">
-        {highlightCards.map((card) => (
-          <div key={card.id} className="rd-card">
-            <div className="rd-card-top">
-              <span className="rd-card-icon">{card.icon}</span>
-              <span className="rd-card-delta">{card.delta}</span>
-            </div>
-            <div className="rd-card-value">{card.value}</div>
-            <div className="rd-card-label">{card.label}</div>
-          </div>
-        ))}
-      </section>
+  {highlightCards.map(card => {
+    const Icon = card.icon;
+
+    return (
+      <div
+        key={card.id}
+        className="rd-card"
+        style={{ backgroundColor: card.bg }}
+      >
+        <div className="rd-card-top">
+          <Icon size={26} color={card.color} />
+          <span className="rd-card-delta">{card.delta}</span>
+        </div>
+
+        <div
+          className="rd-card-value"
+          style={{ color: card.color }}
+        >
+          {card.value}
+        </div>
+
+        <div className="rd-card-label">
+          {card.label}
+        </div>
+      </div>
+    );
+  })}
+</section>
 
       <section className="rd-section rd-two-col">
 

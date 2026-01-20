@@ -1,10 +1,7 @@
 package com.example.userservice.controller;
 
 import com.example.userservice.dto.*;
-import com.example.userservice.records.ApiResponse;
-import com.example.userservice.records.LoginResponse;
-import com.example.userservice.records.PublicStats;
-import com.example.userservice.records.SetPasswordRequest;
+import com.example.userservice.records.*;
 import com.example.userservice.serviceimp.AuthServiceImp;
 import com.example.userservice.serviceimp.TokenServiceImp;
 import com.example.userservice.serviceimp.UserServiceImp;
@@ -15,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 @RestController
@@ -113,5 +112,22 @@ public class AuthController {
                 ));
     }
 
+    // chatbot
+    @GetMapping("/chatbot/questions")
+    public ResponseEntity<ApiResponse<List<ChatbotQuestionDto>>> getQuestions(
+            @RequestParam String role,
+            @RequestParam(defaultValue = "en") String lang
+    ) {
+        List<ChatbotQuestionDto> questions =
+                userServiceImp.getQuestions(role, lang);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Chatbot questions fetched successfully",
+                        questions
+                )
+        );
+    }
 
 }

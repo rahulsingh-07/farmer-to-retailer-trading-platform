@@ -24,6 +24,10 @@ export const registerRetailer = (formData) => {
   return publicApi.upload("/auth/register/retailer", formData);
 };
 
+export const landingPageStats = async () => {
+  const response = await publicApi.get("/auth/landingPageStats");
+  return response.data;
+};
 
 /**
  * FORGOT PASSWORD

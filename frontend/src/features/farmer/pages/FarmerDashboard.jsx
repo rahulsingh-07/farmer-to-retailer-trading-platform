@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
+import { Clock, CreditCard, Truck, CheckCircle } from "lucide-react";
 import { getFarmerStats } from "../farmerService";
 import "./FarmerDashboard.css";
 
@@ -45,31 +46,44 @@ export default function FarmerDashboard() {
 
   /* ================= WORKFLOW CARDS ================= */
   const workflowCards = [
-    {
-      id: 1,
-      label: "Pending Orders",
-      value: stats.totalPendingOrders,
-      link: "/farmer/orders?status=PENDING"
-    },
-    {
-      id: 2,
-      label: "Waiting Payment",
-      value: stats.totalWaitingPayment,
-      link: "/farmer/orders?status=WAITING_PAYMENT"
-    },
-    {
-      id: 3,
-      label: "Shipped",
-      value: stats.totalShippedOrders,
-      link: "/farmer/orders?status=SHIPPED"
-    },
-    {
-      id: 4,
-      label: "Completed",
-      value: stats.totalCompletedDelivery,
-      link: "/farmer/orders?status=COMPLETED"
-    }
-  ];
+  {
+    id: 1,
+    label: "Pending Orders",
+    value: stats.totalPendingOrders,
+    link: "/farmer/orders?status=PENDING",
+    icon: Clock,
+    bg: "#f5d7b2",
+    color: "#f97316"
+  },
+  {
+    id: 2,
+    label: "Waiting Payment",
+    value: stats.totalWaitingPayment,
+    link: "/farmer/orders?status=WAITING_PAYMENT",
+    icon: CreditCard,
+    bg: "#f6f2c9",
+    color: "#ca8a04"
+  },
+  {
+    id: 3,
+    label: "Shipped",
+    value: stats.totalShippedOrders,
+    link: "/farmer/orders?status=SHIPPED",
+    icon: Truck,
+    bg: "#e2ecfa",
+    color: "#2563eb"
+  },
+  {
+    id: 4,
+    label: "Completed",
+    value: stats.totalCompletedDelivery,
+    link: "/farmer/orders?status=COMPLETED",
+    icon: CheckCircle,
+    bg: "#e3fdf1",
+    color: "#16a34a"
+  }
+];
+
 
   /* ================= CHART DATA ================= */
   const barData = [
@@ -106,24 +120,17 @@ export default function FarmerDashboard() {
             </Link>
           </div>
         </div>
-
-        <div className="fd-hero-card">
-          <div className="fd-hero-label">Today</div>
-          <div className="fd-hero-metric">
-            {heroDeliveries} deliveries
-          </div>
-          <p className="fd-hero-note">
-            {heroPending} orders pending action
-          </p>
-        </div>
       </header>
 
       {/* ================= WORKFLOW CARDS ================= */}
       <section className="fd-stats-grid">
         {workflowCards.map(card => (
-          <Link key={card.id} to={card.link} className="fd-card">
-            <div className="fd-card-value">{card.value}</div>
+          <Link key={card.id} to={card.link} className="fd-card" style={{ backgroundColor: card.bg, color: card.color }}> 
+            <div>
             <div className="fd-card-label">{card.label}</div>
+            <div className="fd-card-value">{card.value}</div>
+            </div>
+            <card.icon size={24} />
           </Link>
         ))}
       </section>

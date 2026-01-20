@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ResponsiveContainer,
   PieChart,
@@ -8,19 +8,37 @@ import {
   Legend,
 } from "recharts";
 import "./Statics.css";
+import { landingPageStats } from "../../services/authService";
 
 const COLORS = ["#2563eb", "#16a34a", "#f59e0b"];
-
-const pieData = [
-  { id: 1, name: "Total Farmers", value: 1250 },
-  { id: 2, name: "Total Retailers", value: 780 },
-  { id: 3, name: "Trades Completed", value: 8500 },
-];
 
 // number formatter for labels & tooltip
 const formatNumber = (num) => num.toLocaleString("en-IN") + "+";
 
 export default function Statics() {
+  const [statsData, setStatsData] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await landingPageStats();
+        setStatsData(data);
+      } catch (error) {
+        console.error("Failed to fetch stats", error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  if (!statsData) return <p>Loading...</p>;
+
+  const pieData = [
+    { id: 1, name: "Total Farmers", value: statsData.totalFarmer },
+    { id: 2, name: "Total Retailers", value: statsData.totalRetailer },
+    { id: 3, name: "Trades Completed", value: statsData.totalTrades },
+  ];
+
   return (
     <section className="stats-section">
       {/* LEFT CONTENT */}
@@ -59,9 +77,7 @@ export default function Statics() {
                 />
               ))}
             </Pie>
-            <Tooltip
-              formatter={(value) => formatNumber(value)}
-            />
+            <Tooltip formatter={(value) => formatNumber(value)} />
             <Legend />
           </PieChart>
         </ResponsiveContainer>

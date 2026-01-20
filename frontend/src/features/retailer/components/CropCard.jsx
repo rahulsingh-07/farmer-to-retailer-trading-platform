@@ -87,7 +87,7 @@ export default function CropCard({ crop }) {
       </div>
 
       <div className="crop-card-body">
-        <h3 className="crop-title" title={cropName}>
+        <h3 className="crop-card-title" title={cropName}>
           {cropName.length > 25 ? `${cropName.substring(0, 25)}...` : cropName}
         </h3>
         <p className="crop-variety">

@@ -79,4 +79,7 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             @Param("retailerId") UUID retailerId,
             @Param("status") OrderStatus status
     );
+
+    @Query("SELECT COUNT(o) from Order o where o.orderStatus='DELIVERED'")
+    long totalTrades();
 }

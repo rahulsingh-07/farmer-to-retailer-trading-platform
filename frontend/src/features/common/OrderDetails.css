@@ -1,7 +1,6 @@
 .order-details-container{
     background-color: rgba(0, 0, 0, 0.222);
     backdrop-filter: transparent;
-    margin: 20px;
     display: flex;
     border-radius: 10px;
     overflow: hidden;
@@ -11,7 +10,6 @@
 }
 .order-content{
     width: 50%;
-    margin: auto;
     border-right: 2px solid rgb(238, 235, 235);
 }
 

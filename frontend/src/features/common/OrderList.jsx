@@ -33,9 +33,9 @@ export default function OrderList() {
       { value: "", label: "All Orders" },
       { value: "PENDING", label: "Pending" },
       { value: "CONFIRMED", label: "Confirmed" },
+      { value: "PAID", label: "Paid" },
       { value: "SHIPPED", label: "Shipped" },
       { value: "DELIVERED", label: "Delivered" },
-      { value: "CANCELLED", label: "Cancelled" },
     ],
   };
 
@@ -116,19 +116,6 @@ export default function OrderList() {
           onClearFilters={handleClearFilters}
         />
       </nav>
-
-      <div className="order-stats">
-        <span>
-          Showing{" "}
-          {totalElements > 0
-            ? `${filters.page * filters.size + 1}-${Math.min(
-                (filters.page + 1) * filters.size,
-                totalElements
-              )}`
-            : "0"}{" "}
-          of {totalElements.toLocaleString()} orders
-        </span>
-      </div>
 
       <div className={`order-grid ${loading ? "loading-overlay" : ""}`}>
         {orders.length > 0 ? (

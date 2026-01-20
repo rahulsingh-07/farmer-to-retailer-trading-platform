@@ -9,9 +9,6 @@
 
 /* ================= HERO ================= */
 .fd-hero {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 24px;
   margin-bottom: 28px;
 }
 
@@ -72,34 +69,6 @@
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* ================= HERO CARD ================= */
-.fd-hero-card {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.fd-hero-label {
-  font-size: 12px;
-  color: #64748b;
-  margin-bottom: 6px;
-}
-
-.fd-hero-metric {
-  font-size: 32px;
-  font-weight: 800;
-  color: #0f2a14;
-}
-
-.fd-hero-note {
-  margin-top: 6px;
-  font-size: 14px;
-  color: #475569;
-}
 
 /* ================= WORKFLOW CARDS ================= */
 .fd-stats-grid {
@@ -112,6 +81,9 @@
 .fd-card {
   background: white;
   border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 20px;
   text-decoration: none;
   color: inherit;
@@ -127,7 +99,6 @@
 .fd-card-value {
   font-size: 28px;
   font-weight: 800;
-  color: #16a34a;
 }
 
 .fd-card-label {

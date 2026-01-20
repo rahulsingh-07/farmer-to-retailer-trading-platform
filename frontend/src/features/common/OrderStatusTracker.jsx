@@ -161,7 +161,7 @@ export default function OrderStatusTracker({
                 cancel={false}
               />
               {review.comment && (
-                <p className="review-comment">{review.comment}</p>
+                <p className="review-comment">Feedback: {review.comment}</p>
               )}
             </div>
           )}
@@ -174,7 +174,7 @@ export default function OrderStatusTracker({
                 onChange={(e) => setRating(e.value)}
                 cancel={false}
               />
-
+              <h4 style={{color:"black"}}>Please Give Feedback</h4>
               <InputTextarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}

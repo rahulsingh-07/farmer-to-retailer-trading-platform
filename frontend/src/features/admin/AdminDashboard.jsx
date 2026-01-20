@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import {
+  Hourglass,
+  Users,
+  Shield,
+  BadgeCheck
+} from "lucide-react";
+
 import { getAdminStats } from "./adminService";
 import "./AdminDashboard.css";
 
@@ -36,6 +43,42 @@ const AdminDashboard = () => {
     }
   };
 
+  const adminCards = [
+  {
+    id: 1,
+    label: "Pending Users",
+    value: stats.totalPendingUsers,
+    icon: Hourglass,
+    bg: "#fff7ed",
+    color: "#f97316"
+  },
+  {
+    id: 2,
+    label: "Total Users",
+    value: stats.totalUsers,
+    icon: Users,
+    bg: "#eff6ff",
+    color: "#2563eb"
+  },
+  {
+    id: 3,
+    label: "Admins",
+    value: stats.totalAdmin,
+    icon: Shield,
+    bg: "#fefce8",
+    color: "#ca8a04"
+  },
+  {
+    id: 4,
+    label: "Approved by You",
+    value: stats.totalApproved,
+    icon: BadgeCheck,
+    bg: "#ecfdf5",
+    color: "#16a34a"
+  }
+];
+
+
   /* ================= CHART DATA ================= */
   const barData = [
     { name: "Users", value: stats.totalUsers },
@@ -63,30 +106,34 @@ const AdminDashboard = () => {
 
       {/* ================= HERO CARDS ================= */}
       <section className="ad-stats-grid">
-        <div className="ad-card">
-          <span className="ad-card-icon">⏳</span>
-          <div className="ad-card-value">{stats.totalPendingUsers}</div>
-          <div className="ad-card-label">Pending Users</div>
+  {adminCards.map(card => {
+    const Icon = card.icon;
+
+    return (
+      <div
+        key={card.id}
+        className="ad-card"
+        style={{ backgroundColor: card.bg }}
+      >
+        <div className="ad-card-top">
+          <Icon size={28} color={card.color} />
         </div>
 
-        <div className="ad-card">
-          <span className="ad-card-icon">👥</span>
-          <div className="ad-card-value">{stats.totalUsers}</div>
-          <div className="ad-card-label">Total Users</div>
+        <div
+          className="ad-card-value"
+          style={{ color: card.color }}
+        >
+          {card.value}
         </div>
 
-        <div className="ad-card">
-          <span className="ad-card-icon">👨‍💼</span>
-          <div className="ad-card-value">{stats.totalAdmin}</div>
-          <div className="ad-card-label">Admins</div>
+        <div className="ad-card-label">
+          {card.label}
         </div>
+      </div>
+    );
+  })}
+</section>
 
-        <div className="ad-card">
-          <span className="ad-card-icon">✅</span>
-          <div className="ad-card-value">{stats.totalApproved}</div>
-          <div className="ad-card-label">Approved by You</div>
-        </div>
-      </section>
 
       {/* ================= CHARTS ================= */}
       <section className="ad-charts">

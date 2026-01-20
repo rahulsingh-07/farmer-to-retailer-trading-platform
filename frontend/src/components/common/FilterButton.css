@@ -124,25 +124,25 @@
   transition: all 0.2s ease;
 }
 
-.clear-btn:hover {
+.filter-clear-btn:hover {
   background: #f10606;
   color: rgb(255, 253, 253);
   border-color: #f93737;
 }
 
-.close-btn {
+.filter-close-btn {
   width: 30px;
   height: 30px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #9ca3af;
+  color: #555657;
   cursor: pointer;
   transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
-.close-btn:hover {
+.filter-close-btn:hover {
   background: #f1f5f9;
   color: #374151;
   transform: rotate(90deg);

@@ -121,12 +121,6 @@ export default function CropList() {
         />
       </nav>
 
-      <div className="crop-stats">
-        <span>
-          Showing {totalElements > 0 ? `${(filters.page * filters.size) + 1}-${Math.min((filters.page + 1) * filters.size, totalElements)}` : '0'} of {totalElements.toLocaleString()} crops
-        </span>
-      </div>
-
       <div className="crop-grid">
         {crops.length > 0 ? (
           crops.map((crop) => (

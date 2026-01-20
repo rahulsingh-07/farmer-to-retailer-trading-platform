@@ -4,8 +4,10 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.userservice.exception.DuplicateFieldException;
 import com.example.userservice.exception.FileUploadException;
+import com.example.userservice.records.ChatbotQuestionDto;
 import com.example.userservice.records.PublicStats;
 import com.example.userservice.records.RetailerStats;
+import com.example.userservice.repository.ChatbotQuestionRepository;
 import com.example.userservice.util.UsernameGenerator;
 import com.example.userservice.dto.FarmerRegisterRequest;
 import com.example.userservice.dto.RetailerRegisterRequest;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,6 +43,7 @@ public class UserServiceImp implements UserService {
     private final OrderRepository orderRepository;
     private final NotificationRepository notificationRepository;
     private final CloudinaryServiceImp cloudinaryServiceImp;
+    private final ChatbotQuestionRepository chatbot;
 
     @Override
     public void createFarmerUser(FarmerRegisterRequest req) {
@@ -95,7 +99,7 @@ public class UserServiceImp implements UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (patchDTO.getPassword() != null) {
-            user.setPassword(patchDTO.getPassword());
+            user.setPassword(passwordEncoder.encode(patchDTO.getPassword()));
         }
         if (patchDTO.getEmail() != null) {
             user.setEmail(patchDTO.getEmail());
@@ -111,7 +115,8 @@ public class UserServiceImp implements UserService {
     public PublicStats getPublicStats() {
         return new PublicStats(
                 userRepository.totalFarmer(),
-                userRepository.totalRetailer()
+                userRepository.totalRetailer(),
+                orderRepository.totalTrades()
         );
     }
 
@@ -125,4 +130,21 @@ public class UserServiceImp implements UserService {
                 notificationRepository.countUnreadByUserId(userId)
         );
     }
+
+    public List<ChatbotQuestionDto> getQuestions(String role, String lang) {
+        return chatbot
+                .findByRoleAndLanguageAndIsActiveOrderByOrderIndex(
+                        role.toUpperCase(),
+                        lang,
+                        true
+                )
+                .stream()
+                .map(q -> new ChatbotQuestionDto(
+                        q.getId(),
+                        q.getQuestion(),
+                        q.getAnswer()
+                ))
+                .toList();
+    }
+
 }

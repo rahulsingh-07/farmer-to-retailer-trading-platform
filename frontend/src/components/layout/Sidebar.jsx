@@ -45,14 +45,12 @@ export default function Sidebar({ isOpen = true, onClose = () => { } }) {
         { icon: CopyPlus, label: 'Add Crop', path: '/farmer/addCrop' },
         { icon: Package, label: 'Orders', path: '/farmer/orders' },
         { icon: Bell, label: 'Notifications', path: '/farmer/notifications' },
-        // { icon: Wallet, label: 'Wallet', path: '/farmer/wallet' },
       ],
       RETAILER: [
         ...commonLinks,
         { icon: ShoppingCart, label: 'Browse Crops', path: '/retailer/inventory' },
         { icon: Package, label: 'My Orders', path: '/retailer/orders' },
         { icon: Bell, label: 'Notifications', path: '/retailer/notifications' },
-        // { icon: History, label: 'History', path: '/retailer/history' },
         { icon: CopyPlus, label: 'My Bids', path: '/retailer/my-bids' },
       ],
     };
@@ -117,13 +115,13 @@ export default function Sidebar({ isOpen = true, onClose = () => { } }) {
         {/* Footer - Works perfectly in both modes */}
         {!collapsed && (
           <div className="sidebar-footer">
-            <Link to="/profile" className="user-info" onClick={handleLinkClick}>
+            <div className="user-info" >
               <div className="user-avatar">{user.username?.[0]?.toUpperCase() || 'U'}</div>
               <div className="user-details">
                 <span className="user-name">{user.username || 'User'}</span>
                 <span className="user-role">{user.role}</span>
               </div>
-            </Link>
+            </div>
             <button className="logout-btn" onClick={handleLogout}>
               <LogOut size={16} /> Logout
             </button>
@@ -134,9 +132,9 @@ export default function Sidebar({ isOpen = true, onClose = () => { } }) {
         {/* Collapsed mode footer - Icons only */}
         {collapsed && user && (
           <div className="sidebar-footer">
-            <Link to="/profile" className="user-info" onClick={handleLinkClick}>
+            <div className="user-info" >
               <div className="user-avatar">{user.username?.[0]?.toUpperCase() || 'U'}</div>
-            </Link>
+            </div>
             <button className="logout-btn" onClick={handleLogout}>
               <LogOut size={16} />
             </button>

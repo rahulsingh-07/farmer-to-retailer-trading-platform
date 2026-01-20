@@ -38,9 +38,11 @@ public class OrderMapper {
         return OrderResponse.builder()
                 .orderId(order.getId())
                 .status(order.getOrderStatus())
+                .paymentAt(order.getPaymentAt())
                 .createdAt(order.getCreatedAt())
                 .confirmedAt(order.getConfirmedAt())
                 .shippedAt(order.getShippedAt())
+                .deliveredAt(order.getDeliveredAt())
                 .review(review != null ? ReviewDto.from(review) : null)
 
                 //farmer details

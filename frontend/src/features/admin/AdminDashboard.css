@@ -76,33 +76,30 @@
 }
 
 .ad-card {
-  background: #ffffff;
-  border-radius: 16px;
   padding: 18px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border-radius: 14px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ad-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
 }
 
-.ad-card-icon {
-  font-size: 22px;
-  margin-bottom: 8px;
-  display: inline-block;
+.ad-card-top {
+  margin-bottom: 10px;
 }
 
 .ad-card-value {
   font-size: 26px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .ad-card-label {
-  font-size: 13px;
-  color: #64748b;
+  font-size: 14px;
+  color: #374151;
 }
+
 
 /* ================= CHARTS ================= */
 .ad-charts {

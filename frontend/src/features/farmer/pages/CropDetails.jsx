@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import './CropDetails.css';
 
 import { useParams } from 'react-router-dom';
-import { MapPin, Clock1, FilePenLine, IndianRupee, ShoppingBasket, X, Save } from "lucide-react";
+import { MapPin, Clock1, FilePenLine, IndianRupee, ShoppingBasket, X, Save, CalendarDays } from "lucide-react";
 import Button from '../../../components/common/Button';
 import BackBtn from '../../../components/common/BackBtn';
 import { getCropById, updateCrop } from '../farmerService';
@@ -197,7 +197,7 @@ export default function CropDetails() {
                 </span>
               )}
             </p>
-            <p><strong>Harvest Date:</strong> {crop.harvestDate ? new Date(crop.harvestDate).toLocaleDateString('en-IN') : 'N/A'}</p>
+            <p><strong> <CalendarDays/> Harvest Date:</strong> {crop.harvestDate ? new Date(crop.harvestDate).toLocaleDateString('en-IN') : 'N/A'}</p>
             <p className="crop-description">{crop.description}</p>
             {canEditCrop() && (
               <div className="edit-crop-btn-container">

@@ -20,6 +20,7 @@ public class OrderResponse {
     private LocalDateTime createdAt;
     private LocalDateTime confirmedAt;
     private LocalDateTime paymentAt;
+    private LocalDateTime deliveredAt;
     private LocalDateTime shippedAt;
     private ReviewDto review;
 
